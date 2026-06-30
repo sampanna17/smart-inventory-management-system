@@ -13,6 +13,7 @@ public class SaleDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SaleDetailID")
     private Integer saleDetailID;
 
     @ManyToOne
