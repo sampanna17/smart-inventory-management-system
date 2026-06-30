@@ -1,10 +1,9 @@
 package com.smartinventorysystem.modules.user.entity;
 
+import com.smartinventorysystem.enums.Role;
+import com.smartinventorysystem.enums.Status;
 import jakarta.persistence.*;
-import jakarta.transaction.Status;
 import lombok.Data;
-import org.springframework.context.annotation.Role;
-
 import java.time.LocalDateTime;
 
 @Entity
