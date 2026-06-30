@@ -1,6 +1,5 @@
 package com.smartinventorysystem.modules.supplier.entity;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
