@@ -9,6 +9,7 @@ import com.smartinventorysystem.modules.auth.mapper.UserMapper;
 import com.smartinventorysystem.modules.auth.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
+import com.smartinventorysystem.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Override
     public AuthResponse signup(SignupRequest request) {
@@ -57,12 +59,15 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Invalid password");
         }
 
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
         return AuthResponse.builder()
                 .userId(user.getUserID())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .message("Login successful")
+                .token(token)
                 .build();
     }
 
