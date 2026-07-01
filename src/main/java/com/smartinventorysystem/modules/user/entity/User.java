@@ -11,15 +11,18 @@ import java.time.LocalDateTime;
 @Data
 public class User {
 
+    @Column(name = "UserID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userID;
 
+    @Column(name = "FullName")
     private String fullName;
 
-    @Column(unique = true)
+    @Column(name = "Email", unique = true)
     private String email;
 
+    @Column(name = "PasswordHash")
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)

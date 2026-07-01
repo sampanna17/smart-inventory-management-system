@@ -7,6 +7,7 @@ import com.smartinventorysystem.modules.auth.dto.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.SignupRequest;
 import com.smartinventorysystem.modules.auth.mapper.UserMapper;
 import com.smartinventorysystem.modules.auth.repository.UserRepository;
+import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.STAFF);
+        user.setRole(Role.ADMIN);
         user.setStatus(Status.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
 
@@ -62,6 +63,41 @@ public class AuthServiceImpl implements AuthService {
                 .email(user.getEmail())
                 .role(user.getRole().name())
                 .message("Login successful")
+                .build();
+    }
+
+    @Override
+    public AuthResponse updateProfile(Integer userId, UpdateProfileRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // update only allowed fields (
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+
+            // prevent duplicate email
+            boolean emailExists = userRepository.existsByEmail(request.getEmail());
+            if (emailExists && !user.getEmail().equals(request.getEmail())) {
+                throw new RuntimeException("Email already in use");
+            }
+
+            user.setEmail(request.getEmail());
+        }
+
+        user.setUpdatedAt(LocalDateTime.now());
+
+        User updated = userRepository.save(user);
+
+        return AuthResponse.builder()
+                .userId(updated.getUserID())
+                .fullName(updated.getFullName())
+                .email(updated.getEmail())
+                .role(updated.getRole().name())
+                .message("Profile updated successfully")
                 .build();
     }
 }
