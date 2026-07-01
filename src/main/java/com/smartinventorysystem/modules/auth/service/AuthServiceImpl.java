@@ -10,6 +10,7 @@ import com.smartinventorysystem.modules.auth.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.security.JwtUtil;
+import com.smartinventorysystem.security.TokenBlacklist;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final TokenBlacklist tokenBlacklist;
 
     @Override
     public AuthResponse signup(SignupRequest request) {
@@ -105,4 +107,35 @@ public class AuthServiceImpl implements AuthService {
                 .message("Profile updated successfully")
                 .build();
     }
+
+    @Override
+    public void deleteAdmin(Integer adminId) {
+
+        User user = userRepository.findById(adminId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only admin accounts can be deleted.");
+        }
+
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void deleteStaff(Integer staffId) {
+
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new RuntimeException("Staff not found"));
+
+        if (staff.getRole() != Role.STAFF) {
+            throw new RuntimeException("Only staff accounts can be deleted.");
+        }
+
+        userRepository.delete(staff);
+    }
+
+    public void logout(String token) {
+        tokenBlacklist.add(token);
+    }
+
 }

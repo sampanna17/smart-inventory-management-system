@@ -12,4 +12,9 @@ public interface AuthService {
     AuthResponse login(LoginRequest request);
 
     AuthResponse updateProfile(Integer userId, UpdateProfileRequest request);
+
+    void deleteAdmin(Integer adminId);
+    void deleteStaff(Integer staffId);
+    void logout(String token);
+
 }
