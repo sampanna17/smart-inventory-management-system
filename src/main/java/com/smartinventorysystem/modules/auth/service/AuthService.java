@@ -3,7 +3,7 @@ package com.smartinventorysystem.modules.auth.service;
 import com.smartinventorysystem.modules.auth.dto.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.SignupRequest;
-import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
+
 
 public interface AuthService {
 
@@ -11,10 +11,6 @@ public interface AuthService {
 
     AuthResponse login(LoginRequest request);
 
-    AuthResponse updateProfile(Integer userId, UpdateProfileRequest request);
-
-    void deleteAdmin(Integer adminId);
-    void deleteStaff(Integer staffId);
     void logout(String token);
 
 }

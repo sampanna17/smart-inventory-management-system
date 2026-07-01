@@ -30,37 +30,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @PutMapping("/update-profile")
-    public ResponseEntity<AuthResponse> updateProfile(
-            Authentication authentication,
-            @RequestBody UpdateProfileRequest request) {
-
-        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
-            throw new RuntimeException("Unauthorized");
-        }
-
-        return ResponseEntity.ok(
-                authService.updateProfile(user.getUserID(), request)
-        );
-    }
-
-    @DeleteMapping("/admin/{adminId}")
-    public ResponseEntity<String> deleteAdmin(@PathVariable Integer adminId) {
-
-        authService.deleteAdmin(adminId);
-
-        return ResponseEntity.ok("Admin deleted successfully");
-    }
-
-    @DeleteMapping("/staff/{staffId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteStaff(@PathVariable Integer staffId) {
-
-        authService.deleteStaff(staffId);
-
-        return ResponseEntity.ok("Staff deleted successfully");
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
 
@@ -76,6 +45,4 @@ public class AuthController {
 
         return ResponseEntity.ok("Logged out successfully");
     }
-
-
 }
