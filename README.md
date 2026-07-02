@@ -4,9 +4,9 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-## ✨ Features
+## Features
 
-### 👥 User Management
+### User Management
 #### Admin
 - Create, update, and delete staff accounts
 - Assign roles and permissions
@@ -20,7 +20,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 📦 Product Management
+### Product Management
 #### Admin
 - Add, update, and delete products
 - Manage product categories
@@ -33,7 +33,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 📊 Inventory Management
+### Inventory Management
 #### Admin
 - Monitor inventory levels
 - Configure minimum stock threshold
@@ -47,7 +47,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 💰 Sales Management
+### Sales Management
 #### Admin
 - View sales transactions
 - Generate sales reports
@@ -60,7 +60,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 🛒 Purchase Management
+### Purchase Management
 #### Admin
 - Manage suppliers
 - Create purchase orders
@@ -73,7 +73,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 🚚 Supplier Management
+### Supplier Management
 #### Admin
 - Add suppliers
 - Update supplier information
@@ -85,7 +85,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 👤 Customer Management
+### Customer Management
 #### Admin
 - View customer database
 - Generate customer reports
@@ -97,7 +97,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 📈 Reports & Analytics
+### Reports & Analytics
 - Daily Sales Report
 - Monthly Sales Report
 - Revenue Report
@@ -108,7 +108,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 🔔 Notifications
+### Notifications
 - Low Stock Alerts
 - Out of Stock Alerts
 - Product Expiry Alerts *(Optional)*
@@ -116,7 +116,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 📊 Dashboard
+### Dashboard
 
 #### Admin Dashboard
 - Total Products
@@ -133,7 +133,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-### 🔒 Security
+### Security
 - JWT Authentication
 - Role-Based Access Control (RBAC)
 - Session Management
@@ -143,7 +143,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Technology | Description |
 |------------|-------------|
@@ -160,7 +160,7 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 src
@@ -188,7 +188,7 @@ src
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone the repository
 
@@ -233,7 +233,7 @@ http://localhost:8080
 
 ---
 
-## 📌 Functional Requirements
+## Functional Requirements
 
 - Secure user authentication
 - Role-based authorization
@@ -250,7 +250,7 @@ http://localhost:8080
 
 ---
 
-## 🚀 Future Enhancements
+## Future Enhancements
 
 - Barcode/QR Code Scanner
 - Email Notifications
@@ -264,13 +264,13 @@ http://localhost:8080
 
 ---
 
-## 📄 License
+## License
 
 This project is developed for educational and learning purposes.
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Sampanna Piya**
 
