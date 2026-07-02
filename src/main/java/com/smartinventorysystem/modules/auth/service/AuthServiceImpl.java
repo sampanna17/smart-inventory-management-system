@@ -2,11 +2,12 @@ package com.smartinventorysystem.modules.auth.service;
 
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
+import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.mapper.UserMapper;
-import com.smartinventorysystem.modules.auth.repository.UserRepository;
+import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.security.JwtUtil;
 import com.smartinventorysystem.security.TokenBlacklist;
@@ -54,10 +55,10 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UnauthorizedException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Invalid password");
+            throw new UnauthorizedException("Invalid password");
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());

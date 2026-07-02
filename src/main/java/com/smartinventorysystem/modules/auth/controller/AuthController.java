@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.auth.controller;
 
+import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequestMapping(ApiRoutes.AUTH)
 @RequiredArgsConstructor
@@ -19,18 +22,40 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest request) {
-        return ResponseEntity.ok(authService.signup(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> signup(@RequestBody SignupRequest request) {
+        AuthResponse response = authService.signup(request);
+        return ResponseEntity.ok(
+                ApiResponse.<AuthResponse>builder()
+                        .success(true)
+                        .message(response.getMessage())
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(
+                ApiResponse.<AuthResponse>builder()
+                        .success(true)
+                        .message(response.getMessage())
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+    public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader("Authorization") String authHeader) {
         authService.logout(jwtUtil.extractToken(authHeader));
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Logged out successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
     }
 }
