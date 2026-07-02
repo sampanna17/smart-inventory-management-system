@@ -145,18 +145,18 @@ A **Smart Inventory and Sales Management System (SIMS)** built using **Spring Bo
 
 ## Tech Stack
 
-| Technology | Description |
-|------------|-------------|
-| Java 21 | Programming Language |
-| Spring Boot | Backend Framework |
+| Technology      | Description                    |
+|-----------------|--------------------------------|
+| Java 21         | Programming Language           |
+| Spring Boot     | Backend Framework              |
 | Spring Security | Authentication & Authorization |
-| Spring Data JPA | ORM |
-| Hibernate | Database ORM |
-| MySQL | Database |
-| Maven | Dependency Management |
-| JWT | Authentication |
-| Lombok | Boilerplate Reduction |
-| Git & GitHub | Version Control |
+| Spring Data JPA | ORM                            |
+| Hibernate       | Database ORM                   |
+| MySQL           | Database                       |
+| Maven           | Dependency Management          |
+| JWT             | Authentication                 |
+| Lombok          | Boilerplate Reduction          |
+| Git & GitHub    | Version Control                |
 
 ---
 
