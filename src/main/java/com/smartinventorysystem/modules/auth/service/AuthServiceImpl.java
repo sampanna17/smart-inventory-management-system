@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.auth.service;
 
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
-import com.smartinventorysystem.modules.auth.dto.LoginRequest;
-import com.smartinventorysystem.modules.auth.dto.SignupRequest;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
+import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.mapper.UserMapper;
 import com.smartinventorysystem.modules.auth.repository.UserRepository;
 import com.smartinventorysystem.modules.user.entity.User;

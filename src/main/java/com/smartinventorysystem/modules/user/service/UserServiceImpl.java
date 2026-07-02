@@ -1,7 +1,7 @@
 package com.smartinventorysystem.modules.user.service;
 
 import com.smartinventorysystem.enums.Role;
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;

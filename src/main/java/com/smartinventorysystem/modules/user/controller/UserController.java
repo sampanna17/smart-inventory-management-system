@@ -1,6 +1,7 @@
 package com.smartinventorysystem.modules.user.controller;
 
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
+import com.smartinventorysystem.constants.ApiRoutes;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
@@ -11,7 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping(ApiRoutes.USERS)
 @RequiredArgsConstructor
 public class UserController {
 

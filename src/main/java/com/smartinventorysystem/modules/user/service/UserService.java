@@ -1,6 +1,6 @@
 package com.smartinventorysystem.modules.user.service;
 
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 
 public interface UserService {

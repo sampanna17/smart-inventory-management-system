@@ -1,8 +1,9 @@
 package com.smartinventorysystem.modules.auth.controller;
 
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
-import com.smartinventorysystem.modules.auth.dto.LoginRequest;
-import com.smartinventorysystem.modules.auth.dto.SignupRequest;
+import com.smartinventorysystem.constants.ApiRoutes;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
+import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.service.AuthService;
 import com.smartinventorysystem.security.JwtUtil;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(ApiRoutes.AUTH)
 @RequiredArgsConstructor
 public class AuthController {
 

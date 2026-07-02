@@ -1,9 +1,8 @@
 package com.smartinventorysystem.modules.auth.service;
 
-import com.smartinventorysystem.modules.auth.dto.LoginRequest;
-import com.smartinventorysystem.modules.auth.dto.AuthResponse;
-import com.smartinventorysystem.modules.auth.dto.SignupRequest;
-
+import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
+import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 
 public interface AuthService {
 

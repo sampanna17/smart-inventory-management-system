@@ -1,6 +1,6 @@
 package com.smartinventorysystem.modules.auth.mapper;
 
-import com.smartinventorysystem.modules.auth.dto.SignupRequest;
+import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import org.springframework.stereotype.Component;
 

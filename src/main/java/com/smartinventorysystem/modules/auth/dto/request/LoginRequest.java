@@ -1,4 +1,4 @@
-package com.smartinventorysystem.modules.auth.dto;
+package com.smartinventorysystem.modules.auth.dto.request;
 
 import lombok.Data;
 

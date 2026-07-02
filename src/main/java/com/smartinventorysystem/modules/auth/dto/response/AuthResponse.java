@@ -1,9 +1,8 @@
-package com.smartinventorysystem.modules.auth.dto;
+package com.smartinventorysystem.modules.auth.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
