@@ -7,6 +7,7 @@ import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.service.AuthService;
 import com.smartinventorysystem.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<AuthResponse>> signup(@RequestBody SignupRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> signup(@Valid @RequestBody SignupRequest request) {
         AuthResponse response = authService.signup(request);
         return ResponseEntity.ok(
                 ApiResponse.<AuthResponse>builder()
@@ -35,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(
                 ApiResponse.<AuthResponse>builder()
