@@ -1,8 +1,10 @@
 package com.smartinventorysystem.modules.user.service;
 
 import com.smartinventorysystem.enums.Role;
+import com.smartinventorysystem.exceptions.BadRequestException;
+import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
-import com.smartinventorysystem.modules.auth.repository.UserRepository;
+import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ public class UserServiceImpl implements UserService {
     public AuthResponse updateProfile(Integer userId, UpdateProfileRequest request) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // update only allowed fields (
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
@@ -31,8 +33,8 @@ public class UserServiceImpl implements UserService {
 
             // prevent duplicate email
             boolean emailExists = userRepository.existsByEmail(request.getEmail());
-            if (emailExists && !user.getEmail().equals(request.getEmail())) {
-                throw new RuntimeException("Email already in use");
+            if (emailExists) {
+                throw new BadRequestException("Email already in use");
             }
 
             user.setEmail(request.getEmail());
@@ -55,10 +57,10 @@ public class UserServiceImpl implements UserService {
     public void deleteAdmin(Integer adminId) {
 
         User user = userRepository.findById(adminId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (user.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only admin accounts can be deleted.");
+            throw new BadRequestException("Only admin accounts can be deleted.");
         }
 
         userRepository.delete(user);

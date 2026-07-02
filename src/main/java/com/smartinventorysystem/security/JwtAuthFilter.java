@@ -1,7 +1,7 @@
 package com.smartinventorysystem.security;
 
 import com.smartinventorysystem.modules.user.entity.User;
-import com.smartinventorysystem.modules.auth.repository.UserRepository;
+import com.smartinventorysystem.modules.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,12 +9,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +25,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final TokenBlacklist tokenBlacklist;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/api/auth/");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -40,26 +48,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
 
         if (tokenBlacklist.contains(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            SecurityContextHolder.clearContext();
+            request.setAttribute("auth_error", "Token is blacklisted (logged out)");
+            filterChain.doFilter(request, response);
             return;
         }
 
+        // Invalid token
         if (!jwtUtil.isTokenValid(token)) {
+            SecurityContextHolder.clearContext();
+            request.setAttribute("auth_error", "Token is invalid or expired");
             filterChain.doFilter(request, response);
             return;
         }
 
         String email = jwtUtil.extractEmail(token);
 
-        User user = userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
 
-        if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (user == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            return;
+        }
+
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            List<SimpleGrantedAuthority> authorities =
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
                             user,
                             null,
-                            null
+                            authorities
                     );
 
             authToken.setDetails(

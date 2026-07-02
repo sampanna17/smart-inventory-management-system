@@ -1,4 +1,4 @@
-package com.smartinventorysystem.modules.auth.repository;
+package com.smartinventorysystem.modules.user.repository;
 
 import com.smartinventorysystem.modules.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
