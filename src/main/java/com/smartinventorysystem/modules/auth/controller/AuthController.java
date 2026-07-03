@@ -15,14 +15,14 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping(ApiRoutes.AUTH)
+@RequestMapping(ApiRoutes.Auth.BASE)
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/signup")
+    @PostMapping(ApiRoutes.Auth.SIGNUP)
     public ResponseEntity<ApiResponse<AuthResponse>> signup(@Valid @RequestBody SignupRequest request) {
         AuthResponse response = authService.signup(request);
         return ResponseEntity.ok(
@@ -35,7 +35,7 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/login")
+    @PostMapping(ApiRoutes.Auth.LOGIN)
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(
@@ -48,7 +48,7 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/logout")
+    @PostMapping(ApiRoutes.Auth.LOGOUT)
     public ResponseEntity<ApiResponse<Void>> logout(@RequestHeader("Authorization") String authHeader) {
         authService.logout(jwtUtil.extractToken(authHeader));
         return ResponseEntity.ok(

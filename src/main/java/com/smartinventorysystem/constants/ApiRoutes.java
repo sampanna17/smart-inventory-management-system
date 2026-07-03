@@ -4,15 +4,57 @@ public final class ApiRoutes {
 
     private ApiRoutes() {}
 
-    public static final String API = "/api";
+    public static final class Auth {
+        public static final String BASE = "/api/auth";
+        public static final String SIGNUP = "/signup";
+        public static final String LOGIN = "/login";
+        public static final String LOGOUT = "/logout";
 
-    public static final String AUTH = API + "/auth";
-    public static final String USERS = API + "/users";
-    public static final String PRODUCTS = API + "/products";
-    public static final String PRODUCT_IMAGES = PRODUCTS + "/images";
-    public static final String CATEGORIES = API + "/categories";
-    public static final String SUPPLIERS = API + "/suppliers";
-    public static final String INVENTORY = API + "/inventory";
-    public static final String CUSTOMERS = API + "/customers";
+        private Auth() {}
+    }
 
+    public static final class Users {
+        public static final String BASE = "/api/users";
+        public static final String UPDATE_PROFILE = "/update-profile";
+        public static final String DELETE_ADMIN = "/admin/{adminId}";
+        public static final String DELETE_STAFF = "/staff/{staffId}";
+
+        private Users() {}
+    }
+
+    public static final class Products {
+        public static final String BASE = "/api/products";
+
+        private Products() {}
+    }
+
+    public static final class ProductImages {
+        public static final String BASE = "/api/products/images";
+
+        private ProductImages() {}
+    }
+
+    public static final class Categories {
+        public static final String BASE = "/api/categories";
+
+        private Categories() {}
+    }
+
+    public static final class Suppliers {
+        public static final String BASE = "/api/suppliers";
+
+        private Suppliers() {}
+    }
+
+    public static final class Inventory {
+        public static final String BASE = "/api/inventory";
+
+        private Inventory() {}
+    }
+
+    public static final class Customers {
+        public static final String BASE = "/api/customers";
+
+        private Customers() {}
+    }
 }
