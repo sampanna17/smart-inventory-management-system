@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping(ApiRoutes.USERS)
+@RequestMapping(ApiRoutes.Users.BASE)
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PatchMapping("/update-profile")
+    @PatchMapping(ApiRoutes.Users.UPDATE_PROFILE)
     public ResponseEntity<ApiResponse<AuthResponse>> updateProfile(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody UpdateProfileRequest request) {
@@ -38,7 +38,7 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/admin/{adminId}")
+    @DeleteMapping(ApiRoutes.Users.DELETE_ADMIN)
     public ResponseEntity<ApiResponse<Void>> deleteAdmin(@PathVariable Integer adminId) {
 
         userService.deleteAdmin(adminId);
@@ -52,7 +52,7 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/staff/{staffId}")
+    @DeleteMapping(ApiRoutes.Users.DELETE_STAFF)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteStaff(@PathVariable Integer staffId) {
 
