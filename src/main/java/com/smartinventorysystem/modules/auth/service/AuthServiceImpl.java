@@ -2,7 +2,9 @@ package com.smartinventorysystem.modules.auth.service;
 
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
+import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.UnauthorizedException;
+import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
@@ -73,10 +75,32 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-
-
     public void logout(String token) {
         tokenBlacklist.add(token);
+    }
+
+    @Override
+    public void activateAccount(ActivateAccountRequest request) {
+
+        User user = userRepository.findByActivationToken(request.getToken())
+                .orElseThrow(() -> new BadRequestException("Invalid activation token"));
+
+        // check expiry
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("Activation link expired");
+        }
+
+        // set password
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+
+        // activate account
+        user.setStatus(Status.ACTIVE);
+
+        // clear token
+        user.setActivationToken(null);
+        user.setTokenExpiry(null);
+
+        userRepository.save(user);
     }
 
 }

@@ -31,6 +31,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Status status; // ACTIVE, INACTIVE
 
+    @Column(name = "activation_token")
+    private String activationToken;
+
+    @Column(name = "token_expiry")
+    private LocalDateTime tokenExpiry;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
