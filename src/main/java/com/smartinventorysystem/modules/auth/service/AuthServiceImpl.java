@@ -100,6 +100,8 @@ public class AuthServiceImpl implements AuthService {
         user.setActivationToken(null);
         user.setTokenExpiry(null);
 
+        // Update
+        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
 
