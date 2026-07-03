@@ -3,11 +3,14 @@ package com.smartinventorysystem.modules.user.controller;
 import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
-import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
+import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
+import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
+import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -66,4 +69,22 @@ public class UserController {
                         .build()
         );
     }
+
+    @PostMapping(ApiRoutes.Users.CREATE_STAFF)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CreateStaffResponse>> createStaff(
+            @Valid @RequestBody CreateStaffRequest request) {
+
+        CreateStaffResponse response = userService.createStaff(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.<CreateStaffResponse>builder()
+                        .success(true)
+                        .message("Staff created successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
 }
+

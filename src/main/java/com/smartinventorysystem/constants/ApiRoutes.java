@@ -18,6 +18,7 @@ public final class ApiRoutes {
         public static final String UPDATE_PROFILE = "/update-profile";
         public static final String DELETE_ADMIN = "/admin/{adminId}";
         public static final String DELETE_STAFF = "/staff/{staffId}";
+        public static final String CREATE_STAFF = "/create-staff";
 
         private Users() {}
     }
