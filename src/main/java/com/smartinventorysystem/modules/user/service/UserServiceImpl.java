@@ -1,22 +1,30 @@
 package com.smartinventorysystem.modules.user.service;
 
 import com.smartinventorysystem.enums.Role;
+import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.email.service.EmailService;
+import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
+import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
-import com.smartinventorysystem.modules.user.dto.UpdateProfileRequest;
+import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public AuthResponse updateProfile(Integer userId, UpdateProfileRequest request) {
@@ -77,6 +85,44 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.delete(staff);
+    }
+
+    @Override
+    public CreateStaffResponse createStaff(CreateStaffRequest request) {
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email already exists");
+        }
+
+        String temporaryPassword = generateTemporaryPassword();
+
+        User staff = new User();
+        staff.setFullName(request.getFullName());
+        staff.setEmail(request.getEmail());
+        staff.setPasswordHash(passwordEncoder.encode(temporaryPassword));
+        staff.setRole(Role.STAFF);
+        staff.setStatus(Status.ACTIVE);
+        staff.setCreatedAt(LocalDateTime.now());
+
+        User savedStaff = userRepository.save(staff);
+
+        emailService.sendStaffAccountCreatedEmail(
+                savedStaff.getEmail(),
+                savedStaff.getFullName(),
+                temporaryPassword
+        );
+
+        return CreateStaffResponse.builder()
+                .userId(savedStaff.getUserID())
+                .fullName(savedStaff.getFullName())
+                .email(savedStaff.getEmail())
+                .temporaryPassword(temporaryPassword)
+                .role(savedStaff.getRole().name())
+                .build();
+    }
+
+    private String generateTemporaryPassword() {
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
     }
 
 }
