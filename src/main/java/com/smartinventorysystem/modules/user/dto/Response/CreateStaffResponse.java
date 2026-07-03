@@ -11,5 +11,4 @@ public class CreateStaffResponse {
     private String fullName;
     private String email;
     private String role;
-    private String temporaryPassword;
 }

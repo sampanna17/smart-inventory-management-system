@@ -2,6 +2,7 @@ package com.smartinventorysystem.modules.auth.controller;
 
 import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
+import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
@@ -55,6 +56,21 @@ public class AuthController {
                 ApiResponse.<Void>builder()
                         .success(true)
                         .message("Logged out successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @PostMapping(ApiRoutes.Auth.ACTIVATE)
+    public ResponseEntity<ApiResponse<Void>> activateAccount(
+            @Valid @RequestBody ActivateAccountRequest request) {
+
+        authService.activateAccount(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Staff Account Activated Successfully")
                         .timestamp(LocalDateTime.now())
                         .build()
         );

@@ -12,7 +12,6 @@ import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,7 +22,6 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
     @Override
@@ -94,14 +92,17 @@ public class UserServiceImpl implements UserService {
             throw new BadRequestException("Email already exists");
         }
 
-        String temporaryPassword = generateTemporaryPassword();
+        // generate activation token
+        String token = UUID.randomUUID().toString();
 
         User staff = new User();
         staff.setFullName(request.getFullName());
         staff.setEmail(request.getEmail());
-        staff.setPasswordHash(passwordEncoder.encode(temporaryPassword));
+        staff.setPasswordHash(null);
         staff.setRole(Role.STAFF);
-        staff.setStatus(Status.ACTIVE);
+        staff.setStatus(Status.INACTIVE);
+        staff.setActivationToken(token);
+        staff.setTokenExpiry(LocalDateTime.now().plusHours(24));
         staff.setCreatedAt(LocalDateTime.now());
 
         User savedStaff = userRepository.save(staff);
@@ -109,20 +110,15 @@ public class UserServiceImpl implements UserService {
         emailService.sendStaffAccountCreatedEmail(
                 savedStaff.getEmail(),
                 savedStaff.getFullName(),
-                temporaryPassword
+                token
         );
 
         return CreateStaffResponse.builder()
                 .userId(savedStaff.getUserID())
                 .fullName(savedStaff.getFullName())
                 .email(savedStaff.getEmail())
-                .temporaryPassword(temporaryPassword)
                 .role(savedStaff.getRole().name())
                 .build();
-    }
-
-    private String generateTemporaryPassword() {
-        return UUID.randomUUID().toString().replace("-", "").substring(0, 8);
     }
 
 }
