@@ -14,6 +14,7 @@ import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.security.JwtUtil;
 import com.smartinventorysystem.security.TokenBlacklist;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +64,10 @@ public class AuthServiceImpl implements AuthService {
             throw new UnauthorizedException("Invalid password");
         }
 
+        if (user.getStatus() != Status.ACTIVE) {
+            throw new DisabledException("Your account has been deactivated.");
+        }
+
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
         return AuthResponse.builder()
@@ -70,6 +75,7 @@ public class AuthServiceImpl implements AuthService {
                 .fullName(user.getFullName())
                 .email(user.getEmail())
                 .role(user.getRole().name())
+                .status(user.getStatus().name())
                 .message("Login successful")
                 .token(token)
                 .build();

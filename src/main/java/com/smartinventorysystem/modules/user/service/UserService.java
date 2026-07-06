@@ -16,4 +16,5 @@ public interface UserService {
     CreateStaffResponse createStaff(CreateStaffRequest request);
     List<UserResponse> getAllUsers();
     UserResponse getUserById(Integer userId);
+    void deactivateStaff(Integer staffId);
 }

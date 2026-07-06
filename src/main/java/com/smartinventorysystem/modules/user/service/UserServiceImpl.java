@@ -139,4 +139,23 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponse(user);
     }
 
+    @Override
+    public void deactivateStaff(Integer staffId) {
+
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
+
+        if (staff.getRole() != Role.STAFF) {
+            throw new BadRequestException("Only staff accounts can be deactivated.");
+        }
+
+        if (staff.getStatus() == Status.INACTIVE) {
+            throw new BadRequestException("Staff account is already inactive.");
+        }
+
+        staff.setStatus(Status.INACTIVE);
+
+        userRepository.save(staff);
+    }
+
 }

@@ -21,6 +21,7 @@ public final class ApiRoutes {
         public static final String DELETE_STAFF = "/staff/{staffId}";
         public static final String CREATE_STAFF = "/create-staff";
         public static final String GET_BY_ID = "/{userId}";
+        public static final String DEACTIVATE_STAFF = "/staff/{staffId}/deactivate";
 
         private Users() {}
     }
