@@ -4,12 +4,11 @@ import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.mapper.UserMapper;
 import com.smartinventorysystem.modules.email.service.EmailService;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
-import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public AuthResponse updateProfile(Integer userId, UpdateProfileRequest request) {
+    public UserResponse updateProfile(Integer userId, UpdateProfileRequest request) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -54,13 +53,7 @@ public class UserServiceImpl implements UserService {
 
         User updated = userRepository.save(user);
 
-        return AuthResponse.builder()
-                .userId(updated.getUserID())
-                .fullName(updated.getFullName())
-                .email(updated.getEmail())
-                .role(updated.getRole().name())
-                .message("Profile updated successfully")
-                .build();
+        return userMapper.toResponse(updated);
     }
 
     @Override
@@ -117,14 +110,8 @@ public class UserServiceImpl implements UserService {
                 token
         );
 
-        return CreateStaffResponse.builder()
-                .userId(savedStaff.getUserID())
-                .fullName(savedStaff.getFullName())
-                .email(savedStaff.getEmail())
-                .role(savedStaff.getRole().name())
-                .build();
+        return userMapper.toCreateStaffResponse(savedStaff);
     }
-
 
     @Override
     public List<UserResponse> getAllUsers() {
