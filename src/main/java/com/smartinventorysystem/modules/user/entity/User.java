@@ -4,11 +4,16 @@ import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Users")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
     @Column(name = "UserID")
@@ -37,6 +42,10 @@ public class User {
     @Column(name = "token_expiry")
     private LocalDateTime tokenExpiry;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 }

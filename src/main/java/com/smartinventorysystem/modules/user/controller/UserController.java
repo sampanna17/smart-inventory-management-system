@@ -137,5 +137,21 @@ public class UserController {
                         .build()
         );
     }
+
+    @PatchMapping(ApiRoutes.Users.ACTIVATE_STAFF)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> activateStaff(
+            @PathVariable Integer staffId) {
+
+        userService.activateStaff(staffId);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Staff account activated successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
 }
 
