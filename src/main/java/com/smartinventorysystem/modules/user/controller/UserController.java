@@ -1,7 +1,7 @@
 package com.smartinventorysystem.modules.user.controller;
 
-import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
+import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
@@ -9,6 +9,7 @@ import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
 import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -116,6 +117,22 @@ public class UserController {
                         .success(true)
                         .message("User fetched successfully")
                         .data(user)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @PatchMapping(ApiRoutes.Users.DEACTIVATE_STAFF)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deactivateStaff(
+            @PathVariable Integer staffId) {
+
+        userService.deactivateStaff(staffId);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Staff account deactivated successfully")
                         .timestamp(LocalDateTime.now())
                         .build()
         );
