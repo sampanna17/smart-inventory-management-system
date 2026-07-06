@@ -27,6 +27,19 @@ public final class ApiRoutes {
         private Users() {}
     }
 
+    public static final class Categories {
+
+        public static final String BASE = "/api/categories";
+
+        public static final String BY_ID = "/{id}";
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{id}";
+        public static final String DELETE = "/{id}";
+        public static final String ALL = "";
+
+        private Categories() {}
+    }
+
     public static final class Products {
         public static final String BASE = "/api/products";
 
@@ -37,12 +50,6 @@ public final class ApiRoutes {
         public static final String BASE = "/api/products/images";
 
         private ProductImages() {}
-    }
-
-    public static final class Categories {
-        public static final String BASE = "/api/categories";
-
-        private Categories() {}
     }
 
     public static final class Suppliers {
