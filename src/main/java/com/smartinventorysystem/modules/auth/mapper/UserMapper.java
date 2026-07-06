@@ -2,15 +2,9 @@ package com.smartinventorysystem.modules.auth.mapper;
 
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.user.entity.User;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 
-@Component
-public class UserMapper {
-
-    public User toEntity(SignupRequest request) {
-        User user = new User();
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        return user;
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    User toEntity(SignupRequest request);
 }

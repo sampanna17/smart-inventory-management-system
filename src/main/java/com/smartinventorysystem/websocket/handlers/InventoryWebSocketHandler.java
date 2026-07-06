@@ -1,4 +1,4 @@
-package com.smartinventorysystem.websocket.ws;
+package com.smartinventorysystem.websocket.handlers;
 
 import org.jspecify.annotations.NonNull;
 import org.springframework.web.socket.TextMessage;
