@@ -158,4 +158,23 @@ public class UserServiceImpl implements UserService {
         userRepository.save(staff);
     }
 
+    @Override
+    public void activateStaff(Integer staffId) {
+
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
+
+        if (staff.getRole() != Role.STAFF) {
+            throw new BadRequestException("Only staff accounts can be activated.");
+        }
+
+        if (staff.getStatus() == Status.ACTIVE) {
+            throw new BadRequestException("Staff account is already active.");
+        }
+
+        staff.setStatus(Status.ACTIVE);
+
+        userRepository.save(staff);
+    }
+
 }
