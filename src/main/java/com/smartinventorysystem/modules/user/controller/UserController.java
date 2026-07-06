@@ -2,7 +2,6 @@ package com.smartinventorysystem.modules.user.controller;
 
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.common.dto.ApiResponse;
-import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
@@ -29,15 +28,15 @@ public class UserController {
     private final UserService userService;
 
     @PatchMapping(ApiRoutes.Users.UPDATE_PROFILE)
-    public ResponseEntity<ApiResponse<AuthResponse>> updateProfile(
+    public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
             @AuthenticationPrincipal User user,
             @Valid @RequestBody UpdateProfileRequest request) {
 
-        AuthResponse response = userService.updateProfile(user.getUserID(), request);
+        UserResponse response = userService.updateProfile(user.getUserID(), request);
         return ResponseEntity.ok(
-                ApiResponse.<AuthResponse>builder()
+                ApiResponse.<UserResponse>builder()
                         .success(true)
-                        .message(response.getMessage())
+                        .message("Profile updated successfully")
                         .data(response)
                         .timestamp(LocalDateTime.now())
                         .build()
