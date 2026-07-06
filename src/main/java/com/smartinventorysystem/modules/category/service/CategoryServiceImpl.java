@@ -28,9 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DuplicateCategoryException("Category already exists with name: " + request.getCategoryName());
         }
 
-        Category category = new Category();
-        category.setCategoryName(request.getCategoryName());
-        category.setDescription(request.getDescription());
+        Category category = categoryMapper.toEntity(request);
         category.setCreatedAt(LocalDateTime.now());
 
         return categoryMapper.toResponse(categoryRepository.save(category));
