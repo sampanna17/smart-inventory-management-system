@@ -1,6 +1,6 @@
 package com.smartinventorysystem.websocket.config;
 
-import com.smartinventorysystem.websocket.handlers.InventoryWebSocketHandler;
+import com.smartinventorysystem.websocket.handlers.WebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -10,9 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final InventoryWebSocketHandler handler;
+    private final WebSocketHandler handler;
 
-    public WebSocketConfig(InventoryWebSocketHandler handler) {
+    public WebSocketConfig(WebSocketHandler handler) {
         this.handler = handler;
     }
 
