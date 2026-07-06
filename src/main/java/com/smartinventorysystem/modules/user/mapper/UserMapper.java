@@ -11,9 +11,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
-    // request -> entity
-    User toEntity(CreateStaffRequest request);
-
     // entity -> response
     @Mapping(source = "role", target = "role")
     @Mapping(source = "status", target = "status")

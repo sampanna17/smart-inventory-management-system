@@ -1,0 +1,105 @@
+package com.smartinventorysystem.modules.category.controller;
+
+import com.smartinventorysystem.constants.ApiRoutes;
+import com.smartinventorysystem.common.dto.ApiResponse;
+import com.smartinventorysystem.modules.category.dto.Request.CreateCategoryRequest;
+import com.smartinventorysystem.modules.category.dto.Request.UpdateCategoryRequest;
+import com.smartinventorysystem.modules.category.dto.Response.CategoryResponse;
+import com.smartinventorysystem.modules.category.service.CategoryService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@RestController
+@RequestMapping(ApiRoutes.Categories.BASE)
+@RequiredArgsConstructor
+public class CategoryController {
+
+    private final CategoryService categoryService;
+
+    @PostMapping(ApiRoutes.Categories.CREATE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(
+            @Valid @RequestBody CreateCategoryRequest request) {
+
+        CategoryResponse response = categoryService.createCategory(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                ApiResponse.<CategoryResponse>builder()
+                        .success(true)
+                        .message("Category created successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @PutMapping(ApiRoutes.Categories.UPDATE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
+            @PathVariable Integer id,
+            @RequestBody UpdateCategoryRequest request) {
+
+        CategoryResponse response = categoryService.updateCategory(id, request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<CategoryResponse>builder()
+                        .success(true)
+                        .message("Category updated successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @DeleteMapping(ApiRoutes.Categories.DELETE)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Integer id) {
+
+        categoryService.deleteCategory(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Category deleted successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @GetMapping(ApiRoutes.Categories.BY_ID)
+    public ResponseEntity<ApiResponse<CategoryResponse>> getById(@PathVariable Integer id) {
+
+        CategoryResponse response = categoryService.getCategoryById(id);
+
+        return ResponseEntity.ok(
+                ApiResponse.<CategoryResponse>builder()
+                        .success(true)
+                        .message("Category fetched successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @GetMapping(ApiRoutes.Categories.ALL)
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAll() {
+
+        List<CategoryResponse> response = categoryService.getAllCategories();
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<CategoryResponse>>builder()
+                        .success(true)
+                        .message("Categories fetched successfully")
+                        .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+}

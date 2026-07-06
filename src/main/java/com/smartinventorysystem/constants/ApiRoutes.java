@@ -32,8 +32,8 @@ public final class ApiRoutes {
         public static final String BASE = "/api/categories";
 
         public static final String BY_ID = "/{id}";
-        public static final String CREATE = "";
-        public static final String UPDATE = "{id}";
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{id}";
         public static final String DELETE = "/{id}";
         public static final String ALL = "";
 
