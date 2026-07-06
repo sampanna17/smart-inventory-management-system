@@ -1,6 +1,7 @@
 package com.smartinventorysystem.modules.product.entity;
 
 import com.smartinventorysystem.modules.category.entity.Category;
+import com.smartinventorysystem.modules.unit.entity.Unit;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
@@ -18,6 +19,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "categoryID")
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "unitID")
+    private Unit unit;
 
     private String productName;
     private String description;
