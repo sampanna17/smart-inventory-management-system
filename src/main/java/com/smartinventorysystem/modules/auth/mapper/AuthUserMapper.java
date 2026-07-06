@@ -5,6 +5,6 @@ import com.smartinventorysystem.modules.user.entity.User;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface AuthUserMapper  {
     User toEntity(SignupRequest request);
 }

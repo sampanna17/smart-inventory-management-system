@@ -5,9 +5,11 @@ import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
+import com.smartinventorysystem.modules.user.mapper.UserMapper;
 import com.smartinventorysystem.modules.email.service.EmailService;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
+import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.entity.User;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final UserMapper userMapper;
 
     @Override
     public AuthResponse updateProfile(Integer userId, UpdateProfileRequest request) {
@@ -119,6 +123,20 @@ public class UserServiceImpl implements UserService {
                 .email(savedStaff.getEmail())
                 .role(savedStaff.getRole().name())
                 .build();
+    }
+
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userMapper.toResponseList(userRepository.findAll());
+    }
+
+    @Override
+    public UserResponse getUserById(Integer userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        return userMapper.toResponse(user);
     }
 
 }

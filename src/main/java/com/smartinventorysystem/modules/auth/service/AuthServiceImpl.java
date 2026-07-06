@@ -8,7 +8,7 @@ import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
-import com.smartinventorysystem.modules.auth.mapper.UserMapper;
+import com.smartinventorysystem.modules.auth.mapper.AuthUserMapper;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.security.JwtUtil;
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final AuthUserMapper authUserMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final TokenBlacklist tokenBlacklist;
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = userMapper.toEntity(request);
+        User user = authUserMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.ADMIN);
         user.setStatus(Status.ACTIVE);

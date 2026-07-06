@@ -20,6 +20,7 @@ public final class ApiRoutes {
         public static final String DELETE_ADMIN = "/admin/{adminId}";
         public static final String DELETE_STAFF = "/staff/{staffId}";
         public static final String CREATE_STAFF = "/create-staff";
+        public static final String GET_BY_ID = "/{userId}";
 
         private Users() {}
     }
