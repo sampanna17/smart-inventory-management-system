@@ -6,6 +6,7 @@ import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
 import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
+import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
 import jakarta.validation.Valid;
@@ -17,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiRoutes.Users.BASE)
@@ -82,6 +84,38 @@ public class UserController {
                         .success(true)
                         .message("Staff created successfully")
                         .data(response)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
+
+        List<UserResponse> users = userService.getAllUsers();
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<UserResponse>>builder()
+                        .success(true)
+                        .message("Users fetched successfully")
+                        .data(users)
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @GetMapping(ApiRoutes.Users.GET_BY_ID)
+    public ResponseEntity<ApiResponse<UserResponse>> getUserById(
+            @PathVariable Integer userId) {
+
+        UserResponse user = userService.getUserById(userId);
+
+        return ResponseEntity.ok(
+                ApiResponse.<UserResponse>builder()
+                        .success(true)
+                        .message("User fetched successfully")
+                        .data(user)
                         .timestamp(LocalDateTime.now())
                         .build()
         );
