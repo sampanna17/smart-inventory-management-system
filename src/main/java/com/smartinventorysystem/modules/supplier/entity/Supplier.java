@@ -16,7 +16,8 @@ public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer supplierID;
+    @Column(name = "SupplierID")
+    private Integer supplierId;
 
     private String supplierName;
     private String phone;
