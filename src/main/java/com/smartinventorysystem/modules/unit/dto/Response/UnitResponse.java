@@ -7,6 +7,4 @@ import java.time.LocalDateTime;
 public class UnitResponse {
     private Integer unitId;
     private String unitName;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
