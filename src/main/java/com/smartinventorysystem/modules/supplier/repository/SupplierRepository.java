@@ -9,4 +9,9 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     boolean existsBySupplierName(String supplierName);
     boolean existsByEmail(String email);
     boolean existsByPhone(String phone);
+
+    // For Update
+    boolean existsBySupplierNameAndSupplierIdNot(String supplierName, Integer supplierId);
+    boolean existsByEmailAndSupplierIdNot(String email, Integer supplierId);
+    boolean existsByPhoneAndSupplierIdNot(String phone, Integer supplierId);
 }

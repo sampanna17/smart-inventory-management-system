@@ -1,6 +1,5 @@
 package com.smartinventorysystem.modules.supplier.service;
 
-import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.DuplicateSupplierException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.supplier.dto.Request.CreateSupplierRequest;
@@ -30,11 +29,11 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         if (request.getEmail() != null && supplierRepository.existsByEmail(request.getEmail())) {
-            throw new BadRequestException("Supplier already exists with email: " + request.getEmail());
+            throw new DuplicateSupplierException("Supplier already exists with email: " + request.getEmail());
         }
 
         if (request.getPhone() != null && supplierRepository.existsByPhone(request.getPhone())) {
-            throw new BadRequestException("Supplier already exists with Phone: " + request.getPhone());
+            throw new DuplicateSupplierException("Supplier already exists with Phone: " + request.getPhone());
         }
 
         Supplier supplier = supplierMapper.toEntity(request);
@@ -49,17 +48,51 @@ public class SupplierServiceImpl implements SupplierService {
         Supplier supplier = supplierRepository.findById(supplierId)
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
 
-        if (request.getSupplierName() != null && !request.getSupplierName().isBlank()) {
+
+        if (request.getSupplierName() != null
+                && !request.getSupplierName().isBlank()) {
+
+            if (supplierRepository.existsBySupplierNameAndSupplierIdNot(
+                    request.getSupplierName(), supplierId)) {
+
+                throw new DuplicateSupplierException(
+                        "Supplier already exists with name: " + request.getSupplierName()
+                );
+            }
+
             supplier.setSupplierName(request.getSupplierName());
         }
 
-        if (request.getPhone() != null && !request.getPhone().isBlank()) {
+
+        if (request.getEmail() != null
+                && !request.getEmail().isBlank()) {
+
+            if (supplierRepository.existsByEmailAndSupplierIdNot(
+                    request.getEmail(), supplierId)) {
+
+                throw new DuplicateSupplierException(
+                        "Supplier already exists with email: " + request.getEmail()
+                );
+            }
+
+            supplier.setEmail(request.getEmail());
+        }
+
+
+        if (request.getPhone() != null
+                && !request.getPhone().isBlank()) {
+
+            if (supplierRepository.existsByPhoneAndSupplierIdNot(
+                    request.getPhone(), supplierId)) {
+
+                throw new DuplicateSupplierException(
+                        "Supplier already exists with phone: " + request.getPhone()
+                );
+            }
+
             supplier.setPhone(request.getPhone());
         }
 
-        if (request.getEmail() != null && !request.getEmail().isBlank()) {
-            supplier.setEmail(request.getEmail());
-        }
 
         if (request.getAddress() != null) {
             supplier.setAddress(request.getAddress());
@@ -67,7 +100,9 @@ public class SupplierServiceImpl implements SupplierService {
 
         supplier.setUpdatedAt(LocalDateTime.now());
 
-        return supplierMapper.toResponse(supplierRepository.save(supplier));
+        return supplierMapper.toResponse(
+                supplierRepository.save(supplier)
+        );
     }
 
     @Override
