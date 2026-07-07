@@ -72,7 +72,6 @@ public final class ApiRoutes {
 
     public static final class Units {
         public static final String BASE = "/api/units";
-
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{unitId}";
         public static final String DELETE = "/{unitId}";
