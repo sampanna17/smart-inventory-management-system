@@ -40,18 +40,6 @@ public final class ApiRoutes {
         private Categories() {}
     }
 
-    public static final class Products {
-        public static final String BASE = "/api/products";
-
-        private Products() {}
-    }
-
-    public static final class ProductImages {
-        public static final String BASE = "/api/products/images";
-
-        private ProductImages() {}
-    }
-
     public static final class Suppliers {
         public static final String BASE = "/api/suppliers";
         public static final String CREATE = "/create";
@@ -61,12 +49,6 @@ public final class ApiRoutes {
         public static final String GET_ALL = "";
 
         private Suppliers() {}
-    }
-
-    public static final class Inventory {
-        public static final String BASE = "/api/inventory";
-
-        private Inventory() {}
     }
 
     public static final class Customers {
@@ -90,4 +72,33 @@ public final class ApiRoutes {
 
         private Units() {}
     }
+
+    public static final class Products {
+        public static final String BASE = "/api/products";
+
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{productId}";
+        public static final String DELETE = "/{productId}";
+        public static final String GET_BY_ID = "/{productId}";
+        public static final String GET_ALL = "";
+
+        private Products() {}
+    }
+
+    public static final class ProductImages {
+        public static final String BASE = "/api/products/{productId}/images";
+
+        public static final String UPLOAD = "";
+        public static final String GET_ALL = "";
+        public static final String DELETE = "/{imageId}";
+
+        private ProductImages() {}
+    }
+
+    public static final class Inventory {
+        public static final String BASE = "/api/inventory";
+
+        private Inventory() {}
+    }
+
 }

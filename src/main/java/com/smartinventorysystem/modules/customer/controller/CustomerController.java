@@ -32,6 +32,7 @@ public class CustomerController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<CustomerResponse>builder()
+                        .status(HttpStatus.CREATED.value())
                         .success(true)
                         .message("Customer created successfully")
                         .data(response)
@@ -50,6 +51,7 @@ public class CustomerController {
 
         return ResponseEntity.ok(
                 ApiResponse.<CustomerResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Customer updated successfully")
                         .data(response)
@@ -66,6 +68,7 @@ public class CustomerController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Customer deleted successfully")
                         .timestamp(LocalDateTime.now())
@@ -80,6 +83,7 @@ public class CustomerController {
 
         return ResponseEntity.ok(
                 ApiResponse.<CustomerResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Customer fetched successfully")
                         .data(response)
@@ -88,13 +92,14 @@ public class CustomerController {
         );
     }
 
-    @GetMapping
+    @GetMapping(ApiRoutes.Customers.GET_ALL)
     public ResponseEntity<ApiResponse<List<CustomerResponse>>> getAll() {
 
         List<CustomerResponse> response = customerService.getAllCustomers();
 
         return ResponseEntity.ok(
                 ApiResponse.<List<CustomerResponse>>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Customers fetched successfully")
                         .data(response)

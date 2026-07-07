@@ -92,7 +92,7 @@ public class SupplierController {
         );
     }
 
-    @GetMapping
+    @GetMapping(ApiRoutes.Suppliers.GET_ALL)
     public ResponseEntity<ApiResponse<List<SupplierResponse>>> getAll() {
 
         List<SupplierResponse> response = supplierService.getAllSuppliers();
