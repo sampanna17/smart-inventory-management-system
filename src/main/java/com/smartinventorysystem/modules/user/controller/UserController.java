@@ -35,6 +35,7 @@ public class UserController {
         UserResponse response = userService.updateProfile(user.getUserID(), request);
         return ResponseEntity.ok(
                 ApiResponse.<UserResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Profile updated successfully")
                         .data(response)
@@ -50,6 +51,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Admin deleted successfully")
                         .timestamp(LocalDateTime.now())
@@ -65,6 +67,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff deleted successfully")
                         .timestamp(LocalDateTime.now())
@@ -81,6 +84,7 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<CreateStaffResponse>builder()
+                        .status(HttpStatus.CREATED.value())
                         .success(true)
                         .message("Staff created successfully")
                         .data(response)
@@ -97,6 +101,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<List<UserResponse>>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Users fetched successfully")
                         .data(users)
@@ -113,6 +118,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<UserResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("User fetched successfully")
                         .data(user)
@@ -130,6 +136,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff account deactivated successfully")
                         .timestamp(LocalDateTime.now())
@@ -146,6 +153,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff account activated successfully")
                         .timestamp(LocalDateTime.now())

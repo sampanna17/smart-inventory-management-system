@@ -32,6 +32,7 @@ public class UnitController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<UnitResponse>builder()
+                        .status(HttpStatus.CREATED.value())
                         .success(true)
                         .message("Unit created successfully")
                         .data(response)
@@ -50,6 +51,7 @@ public class UnitController {
 
         return ResponseEntity.ok(
                 ApiResponse.<UnitResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Unit updated successfully")
                         .data(response)
@@ -66,6 +68,7 @@ public class UnitController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Unit deleted successfully")
                         .timestamp(LocalDateTime.now())
@@ -80,6 +83,7 @@ public class UnitController {
 
         return ResponseEntity.ok(
                 ApiResponse.<UnitResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Unit fetched successfully")
                         .data(response)
@@ -95,6 +99,7 @@ public class UnitController {
 
         return ResponseEntity.ok(
                 ApiResponse.<List<UnitResponse>>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Units fetched successfully")
                         .data(response)
