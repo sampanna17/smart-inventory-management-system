@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.NOT_FOUND.value())
                         .success(false)
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
                         .success(false)
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
@@ -48,6 +50,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
                         .success(false)
                         .message("Validation failed")
                         .errors(errors)
@@ -60,6 +63,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.UNAUTHORIZED.value())
                         .success(false)
                         .message("Authentication failed")
                         .errors(List.of(ex.getMessage()))
@@ -72,6 +76,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.UNAUTHORIZED.value())
                         .success(false)
                         .message("Account disabled")
                         .errors(List.of(ex.getMessage()))
@@ -84,6 +89,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.<Void>builder()
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                         .success(false)
                         .message("An unexpected error occurred")
                         .errors(List.of(ex.getMessage()))
@@ -96,6 +102,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .success(false)
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(DuplicateUnitException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateUnit(DuplicateUnitException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.CONFLICT.value())
                         .success(false)
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
