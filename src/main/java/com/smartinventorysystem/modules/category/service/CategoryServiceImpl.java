@@ -41,6 +41,16 @@ public class CategoryServiceImpl implements CategoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         if (request.getCategoryName() != null && !request.getCategoryName().isBlank()) {
+
+            if (categoryRepository.existsByCategoryNameAndCategoryIdNot(
+                    request.getCategoryName(),
+                    id
+            )) {
+                throw new DuplicateCategoryException(
+                        "Category already exists with name: " + request.getCategoryName()
+                );
+            }
+
             category.setCategoryName(request.getCategoryName());
         }
 
