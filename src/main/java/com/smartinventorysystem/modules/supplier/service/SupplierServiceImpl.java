@@ -33,6 +33,10 @@ public class SupplierServiceImpl implements SupplierService {
             throw new BadRequestException("Supplier already exists with email: " + request.getEmail());
         }
 
+        if (request.getPhone() != null && supplierRepository.existsByPhone(request.getPhone())) {
+            throw new BadRequestException("Supplier already exists with Phone: " + request.getPhone());
+        }
+
         Supplier supplier = supplierMapper.toEntity(request);
         supplier.setCreatedAt(LocalDateTime.now());
 
