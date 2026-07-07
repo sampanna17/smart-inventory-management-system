@@ -122,4 +122,17 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+    @ExceptionHandler(DuplicateSupplierException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateSupplier(DuplicateSupplierException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .success(false)
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
 }

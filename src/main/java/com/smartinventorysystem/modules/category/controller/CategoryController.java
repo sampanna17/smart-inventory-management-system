@@ -32,6 +32,7 @@ public class CategoryController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.<CategoryResponse>builder()
+                        .status(HttpStatus.CREATED.value())
                         .success(true)
                         .message("Category created successfully")
                         .data(response)
@@ -50,6 +51,7 @@ public class CategoryController {
 
         return ResponseEntity.ok(
                 ApiResponse.<CategoryResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Category updated successfully")
                         .data(response)
@@ -66,6 +68,7 @@ public class CategoryController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Category deleted successfully")
                         .timestamp(LocalDateTime.now())
@@ -80,6 +83,7 @@ public class CategoryController {
 
         return ResponseEntity.ok(
                 ApiResponse.<CategoryResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Category fetched successfully")
                         .data(response)
@@ -95,6 +99,7 @@ public class CategoryController {
 
         return ResponseEntity.ok(
                 ApiResponse.<List<CategoryResponse>>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Categories fetched successfully")
                         .data(response)
