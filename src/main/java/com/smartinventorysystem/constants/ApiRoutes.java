@@ -71,6 +71,11 @@ public final class ApiRoutes {
 
     public static final class Customers {
         public static final String BASE = "/api/customers";
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{customerId}";
+        public static final String DELETE = "/{customerId}";
+        public static final String GET_BY_ID = "/{customerId}";
+        public static final String GET_ALL = "";
 
         private Customers() {}
     }
