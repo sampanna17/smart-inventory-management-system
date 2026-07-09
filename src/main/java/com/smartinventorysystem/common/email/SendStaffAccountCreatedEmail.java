@@ -1,4 +1,4 @@
-package com.smartinventorysystem.modules.email.service;
+package com.smartinventorysystem.common.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

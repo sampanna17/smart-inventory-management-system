@@ -1,4 +1,4 @@
-package com.smartinventorysystem.modules.email.service;
+package com.smartinventorysystem.common.email;
 
 public interface EmailService {
 

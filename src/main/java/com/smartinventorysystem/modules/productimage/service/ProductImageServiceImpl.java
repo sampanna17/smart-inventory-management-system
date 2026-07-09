@@ -1,6 +1,6 @@
     package com.smartinventorysystem.modules.productimage.service;
 
-    import com.smartinventorysystem.common.service.CloudinaryService;
+    import com.smartinventorysystem.common.cloudinary.CloudinaryService;
     import com.smartinventorysystem.exceptions.ResourceNotFoundException;
     import com.smartinventorysystem.modules.product.entity.Product;
     import com.smartinventorysystem.modules.product.repository.ProductRepository;
