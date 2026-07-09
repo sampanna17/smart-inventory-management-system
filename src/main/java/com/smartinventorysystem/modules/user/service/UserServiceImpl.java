@@ -6,7 +6,7 @@ import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
 import com.smartinventorysystem.modules.user.mapper.UserMapper;
-import com.smartinventorysystem.modules.email.service.EmailService;
+import com.smartinventorysystem.common.email.EmailService;
 import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
 import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
 import com.smartinventorysystem.modules.user.repository.UserRepository;

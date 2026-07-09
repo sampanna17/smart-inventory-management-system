@@ -1,4 +1,4 @@
-package com.smartinventorysystem.common.service;
+package com.smartinventorysystem.common.cloudinary;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
