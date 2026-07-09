@@ -6,6 +6,7 @@ public final class ApiRoutes {
 
     public static final class Auth {
         public static final String BASE = "/api/auth";
+
         public static final String SIGNUP = "/signup";
         public static final String LOGIN = "/login";
         public static final String LOGOUT = "/logout";
@@ -16,6 +17,7 @@ public final class ApiRoutes {
 
     public static final class Users {
         public static final String BASE = "/api/users";
+
         public static final String UPDATE_PROFILE = "/update-profile";
         public static final String DELETE_ADMIN = "/admin/{adminId}";
         public static final String DELETE_STAFF = "/staff/{staffId}";
@@ -42,6 +44,7 @@ public final class ApiRoutes {
 
     public static final class Suppliers {
         public static final String BASE = "/api/suppliers";
+
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{supplierId}";
         public static final String DELETE = "/{supplierId}";
@@ -53,6 +56,7 @@ public final class ApiRoutes {
 
     public static final class Customers {
         public static final String BASE = "/api/customers";
+
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{customerId}";
         public static final String DELETE = "/{customerId}";
@@ -64,6 +68,7 @@ public final class ApiRoutes {
 
     public static final class Units {
         public static final String BASE = "/api/units";
+
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{unitId}";
         public static final String DELETE = "/{unitId}";
