@@ -135,4 +135,17 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+    @ExceptionHandler(DuplicateProductException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateProduct(DuplicateProductException ex) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .success(false)
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
 }

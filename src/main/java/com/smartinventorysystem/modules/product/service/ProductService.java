@@ -1,4 +1,21 @@
 package com.smartinventorysystem.modules.product.service;
 
-public class ProductService {
+import com.smartinventorysystem.modules.product.dto.Request.CreateProductRequest;
+import com.smartinventorysystem.modules.product.dto.Request.UpdateProductRequest;
+import com.smartinventorysystem.modules.product.dto.Response.ProductResponse;
+
+import java.util.List;
+
+public interface ProductService {
+
+    ProductResponse createProduct(CreateProductRequest request);
+
+    ProductResponse updateProduct(Integer productId,
+                                  UpdateProductRequest request);
+
+    void deleteProduct(Integer productId);
+
+    ProductResponse getProductById(Integer productId);
+
+    List<ProductResponse> getAllProducts();
 }
