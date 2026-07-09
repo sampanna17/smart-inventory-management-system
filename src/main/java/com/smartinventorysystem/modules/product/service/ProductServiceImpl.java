@@ -54,11 +54,19 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
-        Unit unit = unitRepository.findById(request.getUnitId())
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+            product.setCategory(category);
+        }
+
+        if (request.getUnitId() != null) {
+            Unit unit = unitRepository.findById(request.getUnitId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+
+            product.setUnit(unit);
+        }
 
         if (request.getProductName() != null
                 && !request.getProductName().isBlank()) {
@@ -73,12 +81,21 @@ public class ProductServiceImpl implements ProductService {
             product.setProductName(request.getProductName());
         }
 
-        product.setCategory(category);
-        product.setUnit(unit);
-        product.setDescription(request.getDescription());
-        product.setCostPrice(request.getCostPrice());
-        product.setSellingPrice(request.getSellingPrice());
-        product.setReorderLevel(request.getReorderLevel());
+        if (request.getDescription() != null) {
+            product.setDescription(request.getDescription());
+        }
+
+        if (request.getCostPrice() != null) {
+            product.setCostPrice(request.getCostPrice());
+        }
+
+        if (request.getSellingPrice() != null) {
+            product.setSellingPrice(request.getSellingPrice());
+        }
+
+        if (request.getReorderLevel() != null) {
+            product.setReorderLevel(request.getReorderLevel());
+        }
 
         return productMapper.toResponse(productRepository.save(product));
     }
