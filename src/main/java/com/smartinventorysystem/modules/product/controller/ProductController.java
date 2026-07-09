@@ -47,6 +47,8 @@ public class ProductController {
             @PathVariable Integer productId,
             @Valid @RequestBody UpdateProductRequest request) {
 
+        System.out.println("PRODUCT ID = " + productId);
+
         ProductResponse response = productService.updateProduct(productId, request);
 
         return ResponseEntity.ok(
