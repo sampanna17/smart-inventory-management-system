@@ -12,7 +12,7 @@ public class ProductImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ImageID")
-    private Integer imageID;
+    private Integer imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productID", nullable = false)
@@ -20,4 +20,7 @@ public class ProductImage {
 
     @Column(nullable = false)
     private String imageURL;
+
+    @Column(name = "PublicID", nullable = false)
+    private String publicId;
 }

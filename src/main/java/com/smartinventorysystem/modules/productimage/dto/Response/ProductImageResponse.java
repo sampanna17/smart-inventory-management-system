@@ -8,4 +8,5 @@ public class ProductImageResponse {
     private Integer imageId;
     private Integer productId;
     private String imageURL;
+    private String publicId;
 }
