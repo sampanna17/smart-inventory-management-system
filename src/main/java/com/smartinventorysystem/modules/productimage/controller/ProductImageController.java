@@ -31,7 +31,6 @@ public class ProductImageController {
                         file
                 );
 
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(
                         ApiResponse.<ProductImageResponse>builder()
@@ -45,28 +44,26 @@ public class ProductImageController {
     }
 
     @GetMapping(ApiRoutes.ProductImages.GET_ALL)
-    public ResponseEntity<?> getImages(
-            @PathVariable Integer productId
-    ){
-
+    public ResponseEntity<?> getImages(@PathVariable Integer productId){
         return ResponseEntity.ok(
                 productImageService.getImages(productId)
         );
     }
 
     @DeleteMapping(ApiRoutes.ProductImages.DELETE)
-    public ResponseEntity<?> delete(
-            @PathVariable Integer productId,
-            @PathVariable Integer imageId
-    ){
+    public ResponseEntity<?> delete(@PathVariable Integer productId, @PathVariable Integer imageId){
 
-        productImageService.deleteImage(
-                productId,
-                imageId
-        );
+        productImageService.deleteImage(productId, imageId);
 
-        return ResponseEntity.ok(
-                "Image deleted successfully"
-        );
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        ApiResponse.<ProductImageResponse>builder()
+                                .status(HttpStatus.OK.value())
+                                .success(true)
+                                .message("Image Deleted successfully")
+                                .timestamp(LocalDateTime.now())
+                                .build()
+                );
+
     }
 }

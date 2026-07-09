@@ -8,25 +8,22 @@ import com.smartinventorysystem.modules.productimage.dto.Response.ProductImageRe
 import com.smartinventorysystem.modules.productimage.entity.ProductImage;
 import com.smartinventorysystem.modules.productimage.mapper.ProductImageMapper;
 import com.smartinventorysystem.modules.productimage.repository.ProductImageRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ProductImageServiceImpl implements ProductImageService {
 
     private final ProductRepository productRepository;
-
     private final ProductImageRepository imageRepository;
-
     private final CloudinaryService cloudinaryService;
-
     private final ProductImageMapper mapper;
-
-
 
     @Override
     public ProductImageResponse uploadImage(
@@ -41,13 +38,18 @@ public class ProductImageServiceImpl implements ProductImageService {
                         )
                 );
 
-        String imageUrl =
+        Map<String, Object> uploadResult =
                 cloudinaryService.uploadImage(file);
 
         ProductImage image = new ProductImage();
 
         image.setProduct(product);
-        image.setImageURL(imageUrl);
+        image.setImageURL(
+                uploadResult.get("secure_url").toString()
+        );
+        image.setPublicId(
+                uploadResult.get("public_id").toString()
+        );
 
         return mapper.toResponse(
                 imageRepository.save(image)
@@ -71,12 +73,9 @@ public class ProductImageServiceImpl implements ProductImageService {
         );
     }
 
-
+    @Transactional
     @Override
-    public void deleteImage(
-            Integer productId,
-            Integer imageId
-    ) {
+    public void deleteImage(Integer productId, Integer imageId) {
 
         ProductImage image =
                 imageRepository.findById(imageId)
@@ -94,6 +93,11 @@ public class ProductImageServiceImpl implements ProductImageService {
                     "Image does not belong to product"
             );
         }
+
+        // Delete from Cloudinary
+        cloudinaryService.deleteImage(
+                image.getPublicId()
+        );
 
         imageRepository.delete(image);
 
