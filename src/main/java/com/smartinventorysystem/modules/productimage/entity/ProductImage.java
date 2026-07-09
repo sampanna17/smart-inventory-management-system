@@ -11,11 +11,13 @@ public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ImageID")
     private Integer imageID;
 
-    @ManyToOne
-    @JoinColumn(name = "productID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productID", nullable = false)
     private Product product;
 
+    @Column(nullable = false)
     private String imageURL;
 }
