@@ -17,25 +17,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.NOT_FOUND.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        return buildResponse(
+                HttpStatus.NOT_FOUND,
+                ex.getMessage(),
+                null
+        );
     }
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ApiResponse<Void>> handleBadRequest(BadRequestException ex) {
 
-        return ResponseEntity.badRequest()
-                .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -48,104 +44,67 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .toList();
 
-        return ResponseEntity.badRequest()
-                .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .success(false)
-                        .message("Validation failed")
-                        .errors(errors)
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
+                errors
+        );
     }
 
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuth(UnauthorizedException ex) {
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.UNAUTHORIZED.value())
-                        .success(false)
-                        .message("Authentication failed")
-                        .errors(List.of(ex.getMessage()))
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Authentication failed",
+                List.of(ex.getMessage())
+        );
     }
 
     @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDisabledException(DisabledException ex) {
+    public ResponseEntity<ApiResponse<Void>> handleDisabledException(
+            DisabledException ex) {
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.UNAUTHORIZED.value())
-                        .success(false)
-                        .message("Account disabled")
-                        .errors(List.of(ex.getMessage()))
-                        .timestamp(LocalDateTime.now())
-                        .build());
+        return buildResponse(
+                HttpStatus.UNAUTHORIZED,
+                "Account disabled",
+                List.of(ex.getMessage())
+        );
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateResource(
+            DuplicateResourceException ex) {
+
+        return buildResponse(
+                HttpStatus.CONFLICT,
+                ex.getMessage(),
+                null
+        );
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneralException(Exception ex) {
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected error occurred",
+                List.of(ex.getMessage())
+        );
+    }
+
+    private ResponseEntity<ApiResponse<Void>> buildResponse(
+            HttpStatus status,
+            String message,
+            List<String> errors) {
+
+        return ResponseEntity.status(status)
                 .body(ApiResponse.<Void>builder()
-                        .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                        .status(status.value())
                         .success(false)
-                        .message("An unexpected error occurred")
-                        .errors(List.of(ex.getMessage()))
+                        .message(message)
+                        .errors(errors)
                         .timestamp(LocalDateTime.now())
                         .build());
-    }
-
-    @ExceptionHandler(DuplicateCategoryException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateCategory(DuplicateCategoryException ex) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ApiResponse.<Void>builder()
-                        .status(HttpStatus.CONFLICT.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
-    @ExceptionHandler(DuplicateUnitException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateUnit(DuplicateUnitException ex) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ApiResponse.<Void>builder()
-                        .status(HttpStatus.CONFLICT.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
-    @ExceptionHandler(DuplicateSupplierException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateSupplier(DuplicateSupplierException ex) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ApiResponse.<Void>builder()
-                        .status(HttpStatus.CONFLICT.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
-    }
-
-    @ExceptionHandler(DuplicateProductException.class)
-    public ResponseEntity<ApiResponse<Void>> handleDuplicateProduct(DuplicateProductException ex) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                ApiResponse.<Void>builder()
-                        .status(HttpStatus.CONFLICT.value())
-                        .success(false)
-                        .message(ex.getMessage())
-                        .timestamp(LocalDateTime.now())
-                        .build()
-        );
     }
 }
