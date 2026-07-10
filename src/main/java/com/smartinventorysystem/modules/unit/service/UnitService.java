@@ -1,8 +1,8 @@
 package com.smartinventorysystem.modules.unit.service;
 
-import com.smartinventorysystem.modules.unit.dto.Request.CreateUnitRequest;
-import com.smartinventorysystem.modules.unit.dto.Request.UpdateUnitRequest;
-import com.smartinventorysystem.modules.unit.dto.Response.UnitResponse;
+import com.smartinventorysystem.modules.unit.dto.request.CreateUnitRequest;
+import com.smartinventorysystem.modules.unit.dto.request.UpdateUnitRequest;
+import com.smartinventorysystem.modules.unit.dto.response.UnitResponse;
 import java.util.List;
 
 public interface UnitService {

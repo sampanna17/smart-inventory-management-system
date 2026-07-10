@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.unit.service;
 
 import com.smartinventorysystem.exceptions.DuplicateUnitException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.modules.unit.dto.Request.CreateUnitRequest;
-import com.smartinventorysystem.modules.unit.dto.Request.UpdateUnitRequest;
-import com.smartinventorysystem.modules.unit.dto.Response.UnitResponse;
+import com.smartinventorysystem.modules.unit.dto.request.CreateUnitRequest;
+import com.smartinventorysystem.modules.unit.dto.request.UpdateUnitRequest;
+import com.smartinventorysystem.modules.unit.dto.response.UnitResponse;
 import com.smartinventorysystem.modules.unit.entity.Unit;
 import com.smartinventorysystem.modules.unit.mapper.UnitMapper;
 import com.smartinventorysystem.modules.unit.repository.UnitRepository;

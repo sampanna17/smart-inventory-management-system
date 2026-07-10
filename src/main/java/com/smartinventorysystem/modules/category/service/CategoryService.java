@@ -1,8 +1,8 @@
 package com.smartinventorysystem.modules.category.service;
 
-import com.smartinventorysystem.modules.category.dto.Request.CreateCategoryRequest;
-import com.smartinventorysystem.modules.category.dto.Request.UpdateCategoryRequest;
-import com.smartinventorysystem.modules.category.dto.Response.CategoryResponse;
+import com.smartinventorysystem.modules.category.dto.request.CreateCategoryRequest;
+import com.smartinventorysystem.modules.category.dto.request.UpdateCategoryRequest;
+import com.smartinventorysystem.modules.category.dto.response.CategoryResponse;
 
 import java.util.List;
 

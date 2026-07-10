@@ -1,7 +1,7 @@
 package com.smartinventorysystem.modules.customer.mapper;
 
-import com.smartinventorysystem.modules.customer.dto.Request.CreateCustomerRequest;
-import com.smartinventorysystem.modules.customer.dto.Response.CustomerResponse;
+import com.smartinventorysystem.modules.customer.dto.request.CreateCustomerRequest;
+import com.smartinventorysystem.modules.customer.dto.response.CustomerResponse;
 import com.smartinventorysystem.modules.customer.entity.Customer;
 import org.mapstruct.Mapper;
 

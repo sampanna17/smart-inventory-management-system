@@ -1,6 +1,6 @@
 package com.smartinventorysystem.modules.productimage.mapper;
 
-import com.smartinventorysystem.modules.productimage.dto.Response.ProductImageResponse;
+import com.smartinventorysystem.modules.productimage.dto.response.ProductImageResponse;
 import com.smartinventorysystem.modules.productimage.entity.ProductImage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

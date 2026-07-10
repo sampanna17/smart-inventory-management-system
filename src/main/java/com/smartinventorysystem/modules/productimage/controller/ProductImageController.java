@@ -2,7 +2,7 @@ package com.smartinventorysystem.modules.productimage.controller;
 
 import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
-import com.smartinventorysystem.modules.productimage.dto.Response.ProductImageResponse;
+import com.smartinventorysystem.modules.productimage.dto.response.ProductImageResponse;
 import com.smartinventorysystem.modules.productimage.service.ProductImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

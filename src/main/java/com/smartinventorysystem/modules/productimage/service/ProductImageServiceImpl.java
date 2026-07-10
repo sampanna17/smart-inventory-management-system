@@ -4,7 +4,7 @@
     import com.smartinventorysystem.exceptions.ResourceNotFoundException;
     import com.smartinventorysystem.modules.product.entity.Product;
     import com.smartinventorysystem.modules.product.repository.ProductRepository;
-    import com.smartinventorysystem.modules.productimage.dto.Response.ProductImageResponse;
+    import com.smartinventorysystem.modules.productimage.dto.response.ProductImageResponse;
     import com.smartinventorysystem.modules.productimage.entity.ProductImage;
     import com.smartinventorysystem.modules.productimage.mapper.ProductImageMapper;
     import com.smartinventorysystem.modules.productimage.repository.ProductImageRepository;
