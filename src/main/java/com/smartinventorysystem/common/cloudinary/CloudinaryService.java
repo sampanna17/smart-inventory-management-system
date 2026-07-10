@@ -16,17 +16,13 @@ public class CloudinaryService {
     private final Cloudinary cloudinary;
 
     public Map<String, Object> uploadImage(MultipartFile file) {
-
         try {
-
             Map<?, ?> uploadResult =
                     cloudinary.uploader()
                             .upload(
                                     file.getBytes(),
                                     ObjectUtils.emptyMap()
                             );
-
-
             return Map.of(
                     "secure_url",
                     uploadResult.get("secure_url"),
@@ -34,26 +30,19 @@ public class CloudinaryService {
                     "public_id",
                     uploadResult.get("public_id")
             );
-
-
         } catch (IOException e) {
-
             throw new RuntimeException("Image upload failed");
         }
     }
 
     public void deleteImage(String publicId) {
-
         try {
-
             cloudinary.uploader()
                     .destroy(
                             publicId,
                             ObjectUtils.emptyMap()
                     );
-
         } catch (IOException e) {
-
             throw new RuntimeException(
                     "Failed to delete image from Cloudinary"
             );

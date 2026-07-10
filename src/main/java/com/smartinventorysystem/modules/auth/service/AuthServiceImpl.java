@@ -1,10 +1,12 @@
 package com.smartinventorysystem.modules.auth.service;
 
+import com.smartinventorysystem.common.email.EmailService;
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
+import com.smartinventorysystem.modules.auth.dto.request.ResendActivationRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final TokenBlacklist tokenBlacklist;
+    private final EmailService emailService;
 
     @Override
     public AuthResponse signup(SignupRequest request) {
@@ -40,18 +44,11 @@ public class AuthServiceImpl implements AuthService {
         User user = authUserMapper.toEntity(request);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.ADMIN);
+
         user.setStatus(Status.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
 
-        User saved = userRepository.save(user);
-
-        return AuthResponse.builder()
-                .userId(saved.getUserID())
-                .fullName(saved.getFullName())
-                .email(saved.getEmail())
-                .role(saved.getRole().name())
-                .message("Signup successful")
-                .build();
+        return authUserMapper.toResponse(userRepository.save(user));
     }
 
     @Override
@@ -70,15 +67,10 @@ public class AuthServiceImpl implements AuthService {
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
 
-        return AuthResponse.builder()
-                .userId(user.getUserID())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole().name())
-                .status(user.getStatus().name())
-                .message("Login successful")
-                .token(token)
-                .build();
+        AuthResponse response = authUserMapper.toResponse(user);
+        response.setStatus(user.getStatus().name());
+        response.setToken(token);
+        return response;
     }
 
     public void logout(String token) {
@@ -111,4 +103,28 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
     }
 
+    @Override
+    public void resendActivationLink(ResendActivationRequest request) {
+
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found"));
+
+        if (user.getStatus() == Status.ACTIVE) {
+            throw new BadRequestException("Account is already activated");
+        }
+
+        String token = UUID.randomUUID().toString();
+
+        user.setActivationToken(token);
+        user.setTokenExpiry(LocalDateTime.now().plusHours(24));
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+
+        emailService.sendStaffAccountCreatedEmail(
+                user.getEmail(),
+                user.getFullName(),
+                token
+        );
+    }
 }
