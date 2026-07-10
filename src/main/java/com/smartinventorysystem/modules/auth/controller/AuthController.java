@@ -3,12 +3,14 @@ package com.smartinventorysystem.modules.auth.controller;
 import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
+import com.smartinventorysystem.modules.auth.dto.request.ResendActivationRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.service.AuthService;
 import com.smartinventorysystem.security.JwtUtil;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,9 @@ public class AuthController {
         AuthResponse response = authService.signup(request);
         return ResponseEntity.ok(
                 ApiResponse.<AuthResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
-                        .message(response.getMessage())
+                        .message("Signup successful")
                         .data(response)
                         .timestamp(LocalDateTime.now())
                         .build()
@@ -41,8 +44,9 @@ public class AuthController {
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(
                 ApiResponse.<AuthResponse>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
-                        .message(response.getMessage())
+                        .message("Login successful")
                         .data(response)
                         .timestamp(LocalDateTime.now())
                         .build()
@@ -54,6 +58,7 @@ public class AuthController {
         authService.logout(jwtUtil.extractToken(authHeader));
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Logged out successfully")
                         .timestamp(LocalDateTime.now())
@@ -69,8 +74,25 @@ public class AuthController {
 
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff Account Activated Successfully")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
+    @PostMapping(ApiRoutes.Auth.RESEND_ACTIVATE)
+    public ResponseEntity<ApiResponse<Void>> resendActivationLink(
+            @Valid @RequestBody ResendActivationRequest request) {
+
+        authService.resendActivationLink(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
+                        .success(true)
+                        .message("New activation link has been sent.")
                         .timestamp(LocalDateTime.now())
                         .build()
         );
