@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.supplier.controller;
 
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.common.dto.ApiResponse;
-import com.smartinventorysystem.modules.supplier.dto.Request.CreateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Request.UpdateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Response.SupplierResponse;
+import com.smartinventorysystem.modules.supplier.dto.request.CreateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.request.UpdateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.response.SupplierResponse;
 import com.smartinventorysystem.modules.supplier.service.SupplierService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

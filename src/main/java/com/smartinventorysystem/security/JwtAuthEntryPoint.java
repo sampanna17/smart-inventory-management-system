@@ -22,7 +22,6 @@ public class JwtAuthEntryPoint implements AuthenticationEntryPoint {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
 
-        // Retrieve the custom error message set by the filter
         String authError = (String) request.getAttribute("auth_error");
         String errorMessage = (authError != null) ? authError : "Authentication required or invalid token";
 

@@ -1,7 +1,7 @@
 package com.smartinventorysystem.modules.product.mapper;
 
-import com.smartinventorysystem.modules.product.dto.Request.CreateProductRequest;
-import com.smartinventorysystem.modules.product.dto.Response.ProductResponse;
+import com.smartinventorysystem.modules.product.dto.request.CreateProductRequest;
+import com.smartinventorysystem.modules.product.dto.response.ProductResponse;
 import com.smartinventorysystem.modules.product.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

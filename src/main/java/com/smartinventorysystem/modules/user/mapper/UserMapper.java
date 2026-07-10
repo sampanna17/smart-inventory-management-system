@@ -1,7 +1,7 @@
 package com.smartinventorysystem.modules.user.mapper;
 
-import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
-import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
+import com.smartinventorysystem.modules.user.dto.response.CreateStaffResponse;
+import com.smartinventorysystem.modules.user.dto.response.UserResponse;
 import com.smartinventorysystem.modules.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

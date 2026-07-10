@@ -1,6 +1,6 @@
 package com.smartinventorysystem.modules.productimage.service;
 
-import com.smartinventorysystem.modules.productimage.dto.Response.ProductImageResponse;
+import com.smartinventorysystem.modules.productimage.dto.response.ProductImageResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

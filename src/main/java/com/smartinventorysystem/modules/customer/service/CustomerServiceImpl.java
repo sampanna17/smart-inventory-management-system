@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.customer.service;
 
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.modules.customer.dto.Request.CreateCustomerRequest;
-import com.smartinventorysystem.modules.customer.dto.Request.UpdateCustomerRequest;
-import com.smartinventorysystem.modules.customer.dto.Response.CustomerResponse;
+import com.smartinventorysystem.modules.customer.dto.request.CreateCustomerRequest;
+import com.smartinventorysystem.modules.customer.dto.request.UpdateCustomerRequest;
+import com.smartinventorysystem.modules.customer.dto.response.CustomerResponse;
 import com.smartinventorysystem.modules.customer.entity.Customer;
 import com.smartinventorysystem.modules.customer.mapper.CustomerMapper;
 import com.smartinventorysystem.modules.customer.repository.CustomerRepository;

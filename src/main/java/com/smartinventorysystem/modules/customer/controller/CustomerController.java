@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.customer.controller;
 
 import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.common.dto.ApiResponse;
-import com.smartinventorysystem.modules.customer.dto.Request.CreateCustomerRequest;
-import com.smartinventorysystem.modules.customer.dto.Request.UpdateCustomerRequest;
-import com.smartinventorysystem.modules.customer.dto.Response.CustomerResponse;
+import com.smartinventorysystem.modules.customer.dto.request.CreateCustomerRequest;
+import com.smartinventorysystem.modules.customer.dto.request.UpdateCustomerRequest;
+import com.smartinventorysystem.modules.customer.dto.response.CustomerResponse;
 import com.smartinventorysystem.modules.customer.service.CustomerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

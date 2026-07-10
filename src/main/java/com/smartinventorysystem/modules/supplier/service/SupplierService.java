@@ -1,8 +1,8 @@
 package com.smartinventorysystem.modules.supplier.service;
 
-import com.smartinventorysystem.modules.supplier.dto.Request.CreateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Request.UpdateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Response.SupplierResponse;
+import com.smartinventorysystem.modules.supplier.dto.request.CreateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.request.UpdateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.response.SupplierResponse;
 import java.util.List;
 
 public interface SupplierService {

@@ -1,9 +1,9 @@
 package com.smartinventorysystem.modules.user.service;
 
-import com.smartinventorysystem.modules.user.dto.Request.CreateStaffRequest;
-import com.smartinventorysystem.modules.user.dto.Request.UpdateProfileRequest;
-import com.smartinventorysystem.modules.user.dto.Response.CreateStaffResponse;
-import com.smartinventorysystem.modules.user.dto.Response.UserResponse;
+import com.smartinventorysystem.modules.user.dto.request.CreateStaffRequest;
+import com.smartinventorysystem.modules.user.dto.request.UpdateProfileRequest;
+import com.smartinventorysystem.modules.user.dto.response.CreateStaffResponse;
+import com.smartinventorysystem.modules.user.dto.response.UserResponse;
 
 import java.util.List;
 

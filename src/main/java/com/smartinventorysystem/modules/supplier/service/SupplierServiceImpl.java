@@ -2,9 +2,9 @@ package com.smartinventorysystem.modules.supplier.service;
 
 import com.smartinventorysystem.exceptions.DuplicateSupplierException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.modules.supplier.dto.Request.CreateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Request.UpdateSupplierRequest;
-import com.smartinventorysystem.modules.supplier.dto.Response.SupplierResponse;
+import com.smartinventorysystem.modules.supplier.dto.request.CreateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.request.UpdateSupplierRequest;
+import com.smartinventorysystem.modules.supplier.dto.response.SupplierResponse;
 import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.supplier.mapper.SupplierMapper;
 import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
