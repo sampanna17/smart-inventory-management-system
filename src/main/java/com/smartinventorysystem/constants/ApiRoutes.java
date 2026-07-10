@@ -107,4 +107,16 @@ public final class ApiRoutes {
         private Inventory() {}
     }
 
+    public static final class ProductSuppliers {
+
+        public static final String BASE = "/api/product-suppliers";
+
+        public static final String ADD = "/products/{productId}/suppliers/{supplierId}";
+        public static final String REMOVE = "/products/{productId}/suppliers/{supplierId}";
+        public static final String GET_SUPPLIERS_BY_PRODUCT = "/products/{productId}/suppliers";
+        public static final String GET_PRODUCTS_BY_SUPPLIER = "/suppliers/{supplierId}/products";
+
+        private ProductSuppliers(){}
+    }
+
 }
