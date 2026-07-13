@@ -65,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
             throw new DisabledException("Your account has been deactivated.");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name(), user.getUserID());
 
         AuthResponse response = authUserMapper.toResponse(user);
         response.setStatus(user.getStatus().name());

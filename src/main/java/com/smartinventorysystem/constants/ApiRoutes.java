@@ -113,4 +113,18 @@ public final class ApiRoutes {
         private ProductSuppliers(){}
     }
 
+    public static final class Purchases {
+        public static final String BASE = "/api/purchases";
+
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{purchaseId}";
+        public static final String DELETE = "/{purchaseId}";
+        public static final String GET_BY_ID = "/{purchaseId}";
+        public static final String GET_ALL = "";
+        public static final String UPDATE_STATUS = "/{purchaseId}/status";
+        public static final String GET_BY_SUPPLIER = "/supplier/{supplierId}";
+
+        private Purchases() {}
+    }
+
 }
