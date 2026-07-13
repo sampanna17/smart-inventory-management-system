@@ -13,7 +13,8 @@ public class PurchaseDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer purchaseDetailID;
+    @Column(name = "PurchaseDetailID")
+    private Integer purchaseDetailId;
 
     @ManyToOne
     @JoinColumn(name = "purchaseID")
