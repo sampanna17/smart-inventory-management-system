@@ -101,12 +101,6 @@ public final class ApiRoutes {
         private ProductImages() {}
     }
 
-    public static final class Inventory {
-        public static final String BASE = "/api/inventory";
-
-        private Inventory() {}
-    }
-
     public static final class ProductSuppliers {
 
         public static final String BASE = "/api/product-suppliers";
