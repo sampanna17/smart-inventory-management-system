@@ -5,9 +5,13 @@ import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Purchases")
@@ -16,8 +20,10 @@ public class Purchase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer purchaseID;
+    @Column(name = "PurchaseID")
+    private Integer purchaseId;
 
+    @Column(name = "PurchaseNumber", nullable = false, unique = true, length = 30)
     private String purchaseNumber;
 
     @ManyToOne
@@ -35,5 +41,17 @@ public class Purchase {
     @Enumerated(EnumType.STRING)
     private PurchaseStatus status;
 
+    @CreatedDate
+    @Column(name = "CreatedAt", updatable = false)
     private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    @OneToMany(
+            mappedBy = "purchase",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<PurchaseDetail> purchaseDetails = new ArrayList<>();
 }
