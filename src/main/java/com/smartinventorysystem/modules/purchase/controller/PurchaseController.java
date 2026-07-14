@@ -111,7 +111,7 @@ public class PurchaseController {
         );
     }
 
-    @PutMapping(ApiRoutes.Purchases.UPDATE_STATUS)
+    @PatchMapping(ApiRoutes.Purchases.UPDATE_STATUS)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PurchaseResponse>> updatePurchaseStatus(
             @PathVariable Integer purchaseId,

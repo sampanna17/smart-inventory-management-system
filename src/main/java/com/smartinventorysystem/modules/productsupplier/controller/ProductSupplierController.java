@@ -2,7 +2,8 @@ package com.smartinventorysystem.modules.productsupplier.controller;
 
 import com.smartinventorysystem.common.dto.ApiResponse;
 import com.smartinventorysystem.constants.ApiRoutes;
-import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSupplierResponse;
+import com.smartinventorysystem.modules.productsupplier.dto.response.SupplierSummaryResponse;
+import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSummaryResponse;
 import com.smartinventorysystem.modules.productsupplier.service.ProductSupplierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -57,15 +58,15 @@ public class ProductSupplierController {
     }
 
     @GetMapping(ApiRoutes.ProductSuppliers.GET_SUPPLIERS_BY_PRODUCT)
-    public ResponseEntity<ApiResponse<List<ProductSupplierResponse>>> getSuppliersByProduct(
+    public ResponseEntity<ApiResponse<List<SupplierSummaryResponse>>> getSuppliersByProduct(
             @PathVariable Integer productId
     ) {
 
-        List<ProductSupplierResponse> response =
+        List<SupplierSummaryResponse> response =
                 productSupplierService.getSuppliersByProduct(productId);
 
         return ResponseEntity.ok(
-                ApiResponse.<List<ProductSupplierResponse>>builder()
+                ApiResponse.<List<SupplierSummaryResponse>>builder()
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Suppliers retrieved successfully")
@@ -76,15 +77,15 @@ public class ProductSupplierController {
     }
 
     @GetMapping(ApiRoutes.ProductSuppliers.GET_PRODUCTS_BY_SUPPLIER)
-    public ResponseEntity<ApiResponse<List<ProductSupplierResponse>>> getProductsBySupplier(
+    public ResponseEntity<ApiResponse<List<ProductSummaryResponse>>> getProductsBySupplier(
             @PathVariable Integer supplierId
     ) {
 
-        List<ProductSupplierResponse> response =
+        List<ProductSummaryResponse> response =
                 productSupplierService.getProductsBySupplier(supplierId);
 
         return ResponseEntity.ok(
-                ApiResponse.<List<ProductSupplierResponse>>builder()
+                ApiResponse.<List<ProductSummaryResponse>>builder()
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Products retrieved successfully")

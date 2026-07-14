@@ -11,24 +11,14 @@ import java.util.List;
 public class PurchaseResponse {
 
     private Integer purchaseId;
-
     private String purchaseNumber;
-
     private Integer supplierId;
-
     private String supplierName;
-
     private Integer userId;
-
     private String userName;
-
     private LocalDateTime purchaseDate;
-
     private BigDecimal totalAmount;
-
     private PurchaseStatus status;
-
     private LocalDateTime createdAt;
-
     private List<PurchaseItemResponse> items;
 }
