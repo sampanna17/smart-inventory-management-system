@@ -1,6 +1,8 @@
 package com.smartinventorysystem.modules.productsupplier.service;
 
+import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSummaryResponse;
 import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSupplierResponse;
+import com.smartinventorysystem.modules.productsupplier.dto.response.SupplierSummaryResponse;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ public interface ProductSupplierService {
 
     void removeSupplier(Integer productId, Integer supplierId);
 
-    List<ProductSupplierResponse> getSuppliersByProduct(Integer productId);
+    List<SupplierSummaryResponse> getSuppliersByProduct(Integer productId);
 
-    List<ProductSupplierResponse> getProductsBySupplier(Integer supplierId);
+    List<ProductSummaryResponse> getProductsBySupplier(Integer supplierId);
 }

@@ -1,8 +1,10 @@
 package com.smartinventorysystem.modules.productsupplier.service;
 
 import com.smartinventorysystem.modules.product.repository.ProductRepository;
-import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSupplierResponse;
+import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSummaryResponse;
+
 import com.smartinventorysystem.modules.product.entity.Product;
+import com.smartinventorysystem.modules.productsupplier.dto.response.SupplierSummaryResponse;
 import com.smartinventorysystem.modules.productsupplier.entity.ProductSupplier;
 import com.smartinventorysystem.modules.productsupplier.entity.ProductSupplierId;
 import com.smartinventorysystem.modules.productsupplier.mapper.ProductSupplierMapper;
@@ -80,7 +82,7 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
     }
 
     @Override
-    public List<ProductSupplierResponse> getSuppliersByProduct(Integer productId) {
+    public List<SupplierSummaryResponse> getSuppliersByProduct(Integer productId) {
 
         if (!productRepository.existsById(productId)) {
 
@@ -89,13 +91,13 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
             );
         }
 
-        return mapper.toResponseList(
+        return mapper.toSupplierResponseList(
                 productSupplierRepository.findByProductProductId(productId)
         );
     }
 
     @Override
-    public List<ProductSupplierResponse> getProductsBySupplier(Integer supplierId) {
+    public List<ProductSummaryResponse> getProductsBySupplier(Integer supplierId) {
 
         if (!supplierRepository.existsById(supplierId)) {
 
@@ -104,7 +106,7 @@ public class ProductSupplierServiceImpl implements ProductSupplierService {
             );
         }
 
-        return mapper.toResponseList(
+        return mapper.toProductResponseList(
                 productSupplierRepository.findBySupplierSupplierId(supplierId)
         );
     }
