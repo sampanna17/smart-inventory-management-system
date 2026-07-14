@@ -4,8 +4,10 @@ public final class ApiRoutes {
 
     private ApiRoutes() {}
 
+    public static final String API = "/api";
+
     public static final class Auth {
-        public static final String BASE = "/api/auth";
+        public static final String BASE = API + "/auth";
 
         public static final String SIGNUP = "/signup";
         public static final String LOGIN = "/login";
@@ -17,7 +19,7 @@ public final class ApiRoutes {
     }
 
     public static final class Users {
-        public static final String BASE = "/api/users";
+        public static final String BASE = API + "/users";
 
         public static final String UPDATE_PROFILE = "/update-profile";
         public static final String DELETE_ADMIN = "/admin/{adminId}";
@@ -32,7 +34,7 @@ public final class ApiRoutes {
 
     public static final class Categories {
 
-        public static final String BASE = "/api/categories";
+        public static final String BASE = API + "/categories";
 
         public static final String BY_ID = "/{id}";
         public static final String CREATE = "/create";
@@ -44,7 +46,7 @@ public final class ApiRoutes {
     }
 
     public static final class Suppliers {
-        public static final String BASE = "/api/suppliers";
+        public static final String BASE = API + "/suppliers";
 
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{supplierId}";
@@ -55,8 +57,10 @@ public final class ApiRoutes {
         private Suppliers() {}
     }
 
+
+
     public static final class Customers {
-        public static final String BASE = "/api/customers";
+        public static final String BASE = API + "/customers";
 
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{customerId}";
@@ -68,7 +72,7 @@ public final class ApiRoutes {
     }
 
     public static final class Units {
-        public static final String BASE = "/api/units";
+        public static final String BASE = API + "/units";
 
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{unitId}";
@@ -80,7 +84,7 @@ public final class ApiRoutes {
     }
 
     public static final class Products {
-        public static final String BASE = "/api/products";
+        public static final String BASE = API + "/products";
 
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{productId}";
@@ -92,7 +96,7 @@ public final class ApiRoutes {
     }
 
     public static final class ProductImages {
-        public static final String BASE = "/api/products/{productId}/images";
+        public static final String BASE = API + "/products/{productId}/images";
 
         public static final String UPLOAD = "";
         public static final String GET_ALL = "";
@@ -103,7 +107,7 @@ public final class ApiRoutes {
 
     public static final class ProductSuppliers {
 
-        public static final String BASE = "/api/product-suppliers";
+        public static final String BASE = API + "/product-suppliers";
 
         public static final String ADD = "/products/{productId}/suppliers/{supplierId}";
         public static final String REMOVE = "/products/{productId}/suppliers/{supplierId}";
@@ -114,7 +118,7 @@ public final class ApiRoutes {
     }
 
     public static final class Purchases {
-        public static final String BASE = "/api/purchases";
+        public static final String BASE = API + "/purchases";
 
         public static final String CREATE = "/create";
         public static final String UPDATE = "/update/{purchaseId}";
