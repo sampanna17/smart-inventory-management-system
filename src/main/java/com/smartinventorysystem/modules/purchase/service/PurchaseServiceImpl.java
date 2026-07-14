@@ -6,6 +6,7 @@ import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.product.entity.Product;
 import com.smartinventorysystem.modules.product.repository.ProductRepository;
+import com.smartinventorysystem.modules.productsupplier.repository.ProductSupplierRepository;
 import com.smartinventorysystem.modules.purchase.dto.request.CreatePurchaseRequest;
 import com.smartinventorysystem.modules.purchase.dto.request.PurchaseItemRequest;
 import com.smartinventorysystem.modules.purchase.dto.request.UpdatePurchaseRequest;
@@ -36,6 +37,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final PurchaseRepository purchaseRepository;
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
+    private final ProductSupplierRepository productSupplierRepository;
     private final PurchaseMapper purchaseMapper;
 
     @Override
@@ -68,6 +70,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         for (PurchaseItemRequest itemReq : request.getItems()) {
             Product product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + itemReq.getProductId()));
+
+            validateProductSupplier(product, supplier);
 
             PurchaseDetail detail = new PurchaseDetail();
             detail.setPurchase(purchase);
@@ -111,6 +115,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         for (PurchaseItemRequest itemReq : request.getItems()) {
             Product product = productRepository.findById(itemReq.getProductId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product not found with ID: " + itemReq.getProductId()));
+
+            validateProductSupplier(product, supplier);
 
             PurchaseDetail detail = new PurchaseDetail();
             detail.setPurchase(purchase);
@@ -202,6 +208,19 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
         List<Purchase> purchases = purchaseRepository.findBySupplierSupplierId(supplierId);
         return purchaseMapper.toResponseList(purchases);
+    }
+
+    private void validateProductSupplier(Product product, Supplier supplier) {
+        if (!productSupplierRepository.existsByProductProductIdAndSupplierSupplierId(
+                product.getProductId(),
+                supplier.getSupplierId()
+        )) {
+            throw new BadRequestException(
+                    "Supplier '" + supplier.getSupplierName() +
+                            "' is not assigned to product '" +
+                            product.getProductName() + "'"
+            );
+        }
     }
 }
 
