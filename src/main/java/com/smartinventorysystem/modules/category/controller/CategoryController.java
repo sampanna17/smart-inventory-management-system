@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Categories.CREATE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,7 +38,7 @@ public class CategoryController {
                         .success(true)
                         .message("Category created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -55,7 +57,7 @@ public class CategoryController {
                         .success(true)
                         .message("Category updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -71,7 +73,7 @@ public class CategoryController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Category deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -87,7 +89,7 @@ public class CategoryController {
                         .success(true)
                         .message("Category fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -103,7 +105,7 @@ public class CategoryController {
                         .success(true)
                         .message("Categories fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
