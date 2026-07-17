@@ -1,6 +1,7 @@
 package com.smartinventorysystem.exceptions;
 
 import com.smartinventorysystem.common.dto.ApiResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
@@ -8,11 +9,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private final Clock clock;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleNotFound(ResourceNotFoundException ex) {
@@ -93,6 +98,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ImageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleImageUploadException(Exception ex) {
+
+        return buildResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected error occurred",
+                List.of(ex.getMessage())
+        );
+    }
+
     private ResponseEntity<ApiResponse<Void>> buildResponse(
             HttpStatus status,
             String message,
@@ -104,7 +119,7 @@ public class GlobalExceptionHandler {
                         .success(false)
                         .message(message)
                         .errors(errors)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build());
     }
 }
