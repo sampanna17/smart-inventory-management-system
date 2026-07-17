@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @RestController
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 public class ProductImageController {
 
     private final ProductImageService productImageService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.ProductImages.UPLOAD)
     public ResponseEntity<ApiResponse<ProductImageResponse>> upload(
@@ -38,7 +40,7 @@ public class ProductImageController {
                                 .success(true)
                                 .message("Image uploaded successfully")
                                 .data(response)
-                                .timestamp(LocalDateTime.now())
+                                .timestamp(LocalDateTime.now(clock))
                                 .build()
                 );
     }
@@ -61,7 +63,7 @@ public class ProductImageController {
                                 .status(HttpStatus.OK.value())
                                 .success(true)
                                 .message("Image Deleted successfully")
-                                .timestamp(LocalDateTime.now())
+                                .timestamp(LocalDateTime.now(clock))
                                 .build()
                 );
 

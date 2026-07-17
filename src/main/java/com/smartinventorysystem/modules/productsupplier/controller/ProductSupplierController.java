@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class ProductSupplierController {
 
     private final ProductSupplierService productSupplierService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.ProductSuppliers.ADD)
     public ResponseEntity<ApiResponse<Void>> addSupplier(
@@ -34,7 +36,7 @@ public class ProductSupplierController {
                                 .status(HttpStatus.CREATED.value())
                                 .success(true)
                                 .message("Supplier assigned to product successfully")
-                                .timestamp(LocalDateTime.now())
+                                .timestamp(LocalDateTime.now(clock))
                                 .build()
                 );
     }
@@ -52,7 +54,7 @@ public class ProductSupplierController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Supplier removed from product successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -71,7 +73,7 @@ public class ProductSupplierController {
                         .success(true)
                         .message("Suppliers retrieved successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -90,7 +92,7 @@ public class ProductSupplierController {
                         .success(true)
                         .message("Products retrieved successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }

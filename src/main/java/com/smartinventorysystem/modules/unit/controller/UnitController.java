@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class UnitController {
 
     private final UnitService unitService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Units.CREATE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,7 +38,7 @@ public class UnitController {
                         .success(true)
                         .message("Unit created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -55,7 +57,7 @@ public class UnitController {
                         .success(true)
                         .message("Unit updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -71,7 +73,7 @@ public class UnitController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Unit deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -87,7 +89,7 @@ public class UnitController {
                         .success(true)
                         .message("Unit fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -103,7 +105,7 @@ public class UnitController {
                         .success(true)
                         .message("Units fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }

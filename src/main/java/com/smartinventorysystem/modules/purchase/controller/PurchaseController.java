@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Purchases.CREATE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -37,7 +39,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchase created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -56,7 +58,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchase updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -73,7 +75,7 @@ public class PurchaseController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Purchase deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -90,7 +92,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchase fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -106,7 +108,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchases fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -125,7 +127,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchase status updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -142,7 +144,7 @@ public class PurchaseController {
                         .success(true)
                         .message("Purchases fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }

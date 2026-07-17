@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final Clock clock;
 
     @PatchMapping(ApiRoutes.Users.UPDATE_PROFILE)
     public ResponseEntity<ApiResponse<UserResponse>> updateProfile(
@@ -39,7 +41,7 @@ public class UserController {
                         .success(true)
                         .message("Profile updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -54,7 +56,7 @@ public class UserController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Admin deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -70,7 +72,7 @@ public class UserController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -88,7 +90,7 @@ public class UserController {
                         .success(true)
                         .message("Staff created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -105,7 +107,7 @@ public class UserController {
                         .success(true)
                         .message("Users fetched successfully")
                         .data(users)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -122,7 +124,7 @@ public class UserController {
                         .success(true)
                         .message("User fetched successfully")
                         .data(user)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -139,7 +141,7 @@ public class UserController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff account deactivated successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -156,7 +158,7 @@ public class UserController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff account activated successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
