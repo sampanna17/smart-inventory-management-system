@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Products.CREATE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,7 +38,7 @@ public class ProductController {
                         .success(true)
                         .message("Product created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -47,8 +49,6 @@ public class ProductController {
             @PathVariable Integer productId,
             @Valid @RequestBody UpdateProductRequest request) {
 
-        System.out.println("PRODUCT ID = " + productId);
-
         ProductResponse response = productService.updateProduct(productId, request);
 
         return ResponseEntity.ok(
@@ -57,7 +57,7 @@ public class ProductController {
                         .success(true)
                         .message("Product updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -74,7 +74,7 @@ public class ProductController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Product deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -91,7 +91,7 @@ public class ProductController {
                         .success(true)
                         .message("Product fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -107,7 +107,7 @@ public class ProductController {
                         .success(true)
                         .message("Products fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
