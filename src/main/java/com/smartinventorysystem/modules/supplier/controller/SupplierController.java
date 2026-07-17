@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class SupplierController {
 
     private final SupplierService supplierService;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Suppliers.CREATE)
     @PreAuthorize("hasRole('ADMIN')")
@@ -36,7 +38,7 @@ public class SupplierController {
                         .success(true)
                         .message("Supplier created successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -55,7 +57,7 @@ public class SupplierController {
                         .success(true)
                         .message("Supplier updated successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -71,7 +73,7 @@ public class SupplierController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Supplier deleted successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -87,7 +89,7 @@ public class SupplierController {
                         .success(true)
                         .message("Supplier fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -103,7 +105,7 @@ public class SupplierController {
                         .success(true)
                         .message("Suppliers fetched successfully")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
