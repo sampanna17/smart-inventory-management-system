@@ -2,6 +2,7 @@ package com.smartinventorysystem.common.cloudinary;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.smartinventorysystem.exceptions.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +32,7 @@ public class CloudinaryService {
                     uploadResult.get("public_id")
             );
         } catch (IOException e) {
-            throw new RuntimeException("Image upload failed");
+            throw new ImageException("Image upload failed");
         }
     }
 
@@ -43,7 +44,7 @@ public class CloudinaryService {
                             ObjectUtils.emptyMap()
                     );
         } catch (IOException e) {
-            throw new RuntimeException(
+            throw new ImageException(
                     "Failed to delete image from Cloudinary"
             );
         }
