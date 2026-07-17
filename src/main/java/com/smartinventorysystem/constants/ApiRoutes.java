@@ -57,8 +57,6 @@ public final class ApiRoutes {
         private Suppliers() {}
     }
 
-
-
     public static final class Customers {
         public static final String BASE = API + "/customers";
 
