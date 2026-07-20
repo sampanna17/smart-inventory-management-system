@@ -15,6 +15,10 @@ public class EnvLoader {
 
         System.setProperty("JWT_SECRET", dotenv.get("JWT_SECRET"));
 
+        System.setProperty("AUTH_DB_URL", dotenv.get("AUTH_DB_URL"));
+        System.setProperty("AUTH_DB_USERNAME", dotenv.get("AUTH_DB_USERNAME"));
+        System.setProperty("AUTH_DB_PASSWORD", dotenv.get("AUTH_DB_PASSWORD"));
+
         System.setProperty("DB_URL", dotenv.get("DB_URL"));
         System.setProperty("DB_USERNAME", dotenv.get("DB_USERNAME"));
         System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));

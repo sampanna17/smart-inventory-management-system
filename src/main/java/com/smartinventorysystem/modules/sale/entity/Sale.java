@@ -24,9 +24,7 @@ public class Sale {
     @JoinColumn(name = "customerID")
     private Customer customer;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
-    private User user;
+    private Integer userID;
 
     private LocalDateTime saleDate;
 
