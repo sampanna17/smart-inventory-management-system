@@ -15,8 +15,8 @@ public interface PurchaseMapper {
     @Mapping(source = "purchaseId", target = "purchaseId")
     @Mapping(source = "supplier.supplierId", target = "supplierId")
     @Mapping(source = "supplier.supplierName", target = "supplierName")
-    @Mapping(source = "user.userID", target = "userId")
-    @Mapping(source = "user.fullName", target = "userName")
+    @Mapping(source = "userID", target = "userId")
+    @Mapping(target = "userName", ignore = true)
     @Mapping(source = "purchaseDetails", target = "items")
     PurchaseResponse toResponse(Purchase purchase);
 
