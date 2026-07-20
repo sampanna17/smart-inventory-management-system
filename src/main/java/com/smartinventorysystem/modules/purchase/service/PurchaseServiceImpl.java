@@ -19,12 +19,14 @@ import com.smartinventorysystem.modules.purchase.repository.PurchaseRepository;
 import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
 import com.smartinventorysystem.modules.user.entity.User;
+import com.smartinventorysystem.modules.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
     private final ProductSupplierRepository productSupplierRepository;
+    private final UserRepository userRepository;
     private final PurchaseMapper purchaseMapper;
+    private final Clock clock;
 
     @Override
     @Transactional
@@ -63,8 +67,8 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchaseNumber = "PO-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         }
         purchase.setPurchaseNumber(purchaseNumber);
-        purchase.setCreatedAt(LocalDateTime.now());
-        purchase.setUpdatedAt(LocalDateTime.now());
+        purchase.setCreatedAt(LocalDateTime.now(clock));
+        purchase.setUpdatedAt(LocalDateTime.now(clock));
 
         List<PurchaseDetail> details = new ArrayList<>();
         for (PurchaseItemRequest itemReq : request.getItems()) {
@@ -89,13 +93,17 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setTotalAmount(totalAmount);
 
         Purchase savedPurchase = purchaseRepository.save(purchase);
-        return purchaseMapper.toResponse(savedPurchase);
+
+        PurchaseResponse response = purchaseMapper.toResponse(savedPurchase);
+        response.setUserName(user.getFullName());
+
+        return response;
     }
 
     @Override
     @Transactional
     public PurchaseResponse updatePurchase(Integer purchaseId, UpdatePurchaseRequest request) {
-        Purchase purchase = purchaseRepository.findById(purchaseId)
+        Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
 
         if (purchase.getStatus() != PurchaseStatus.PENDING) {
@@ -132,10 +140,18 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .map(PurchaseDetail::getSubTotal)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         purchase.setTotalAmount(totalAmount);
-        purchase.setUpdatedAt(LocalDateTime.now());
+        purchase.setUpdatedAt(LocalDateTime.now(clock));
 
         Purchase updatedPurchase = purchaseRepository.save(purchase);
-        return purchaseMapper.toResponse(updatedPurchase);
+
+        PurchaseResponse response = purchaseMapper.toResponse(updatedPurchase);
+
+        if (updatedPurchase.getUserID() != null) {
+            userRepository.findById(updatedPurchase.getUserID())
+                    .ifPresent(user -> response.setUserName(user.getFullName()));
+        }
+
+        return response;
     }
 
     @Override
@@ -153,21 +169,43 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public PurchaseResponse getPurchaseById(Integer purchaseId) {
-        Purchase purchase = purchaseRepository.findById(purchaseId)
+        Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
-        return purchaseMapper.toResponse(purchase);
+
+        PurchaseResponse response = purchaseMapper.toResponse(purchase);
+
+        if (purchase.getUserID() != null) {
+            userRepository.findById(purchase.getUserID())
+                    .ifPresent(user -> response.setUserName(user.getFullName()));
+        }
+
+        return response;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<PurchaseResponse> getAllPurchases() {
-        List<Purchase> purchases = purchaseRepository.findAll();
-        return purchaseMapper.toResponseList(purchases);
+        List<Purchase> purchases = purchaseRepository.findAllWithDetails();
+        List<PurchaseResponse> responses = purchaseMapper.toResponseList(purchases);
+
+        responses.forEach(response -> {
+
+            if (response.getUserId() != null) {
+                userRepository.findById(response.getUserId())
+                        .ifPresent(user ->
+                                response.setUserName(user.getFullName())
+                        );
+            }
+
+        });
+
+        return responses;
     }
 
     @Override
     @Transactional
     public PurchaseResponse updatePurchaseStatus(Integer purchaseId, UpdatePurchaseStatusRequest request) {
-        Purchase purchase = purchaseRepository.findById(purchaseId)
+        Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
 
         PurchaseStatus oldStatus = purchase.getStatus();
@@ -195,19 +233,50 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
 
         purchase.setStatus(newStatus);
-        purchase.setUpdatedAt(LocalDateTime.now());
+        purchase.setUpdatedAt(LocalDateTime.now(clock));
 
         Purchase updatedPurchase = purchaseRepository.save(purchase);
-        return purchaseMapper.toResponse(updatedPurchase);
+
+        PurchaseResponse response = purchaseMapper.toResponse(updatedPurchase);
+
+        if (updatedPurchase.getUserID() != null) {
+            userRepository.findById(updatedPurchase.getUserID())
+                    .ifPresent(user -> response.setUserName(user.getFullName()));
+        }
+
+
+
+
+        return response;
     }
 
     @Override
     public List<PurchaseResponse> getPurchasesBySupplier(Integer supplierId) {
+
         if (!supplierRepository.existsById(supplierId)) {
-            throw new ResourceNotFoundException("Supplier not found with ID: " + supplierId);
+            throw new ResourceNotFoundException(
+                    "Supplier not found with ID: " + supplierId
+            );
         }
-        List<Purchase> purchases = purchaseRepository.findBySupplierSupplierId(supplierId);
-        return purchaseMapper.toResponseList(purchases);
+
+        List<Purchase> purchases =
+                purchaseRepository.findBySupplierWithDetails(supplierId);
+
+        List<PurchaseResponse> responses =
+                purchaseMapper.toResponseList(purchases);
+
+        responses.forEach(response -> {
+
+            if (response.getUserId() != null) {
+                userRepository.findById(response.getUserId())
+                        .ifPresent(user ->
+                                response.setUserName(user.getFullName())
+                        );
+            }
+
+        });
+
+        return responses;
     }
 
     private void validateProductSupplier(Product product, Supplier supplier) {
