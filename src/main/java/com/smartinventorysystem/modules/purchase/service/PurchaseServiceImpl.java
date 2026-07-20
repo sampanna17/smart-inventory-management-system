@@ -53,7 +53,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         Purchase purchase = new Purchase();
         purchase.setSupplier(supplier);
-        purchase.setUser(user);
+        purchase.setUserID(user.getUserID());
         purchase.setPurchaseDate(request.getPurchaseDate());
         purchase.setStatus(PurchaseStatus.PENDING);
 

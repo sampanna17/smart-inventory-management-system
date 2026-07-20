@@ -20,9 +20,7 @@ public class StockMovement {
     @JoinColumn(name = "productID")
     private Product product;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
-    private User user;
+    private Integer userID;
 
     @Enumerated(EnumType.STRING)
     private MovementType movementType;

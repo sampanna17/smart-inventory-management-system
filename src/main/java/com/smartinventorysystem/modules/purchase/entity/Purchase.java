@@ -30,9 +30,7 @@ public class Purchase {
     @JoinColumn(name = "supplierID")
     private Supplier supplier;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
-    private User user;
+    private Integer userID;
 
     private LocalDateTime purchaseDate;
 
