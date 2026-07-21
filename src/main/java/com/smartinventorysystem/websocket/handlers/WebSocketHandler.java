@@ -26,5 +26,4 @@ public class WebSocketHandler extends TextWebSocketHandler {
         System.out.println("WebSocket Client Disconnected: " + session.getId());
     }
 
-
 }
