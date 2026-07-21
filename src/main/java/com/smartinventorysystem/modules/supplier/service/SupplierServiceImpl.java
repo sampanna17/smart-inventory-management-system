@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.supplier.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.exceptions.DuplicateSupplierException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.supplier.dto.request.CreateSupplierRequest;
@@ -48,7 +49,7 @@ public class SupplierServiceImpl implements SupplierService {
     public SupplierResponse updateSupplier(Integer supplierId, UpdateSupplierRequest request) {
 
         Supplier supplier = supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.SUPPLIER_NOT_FOUND));
 
 
         if (request.getSupplierName() != null
@@ -111,7 +112,7 @@ public class SupplierServiceImpl implements SupplierService {
     public void deleteSupplier(Integer supplierId) {
 
         Supplier supplier = supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.SUPPLIER_NOT_FOUND));
 
         supplierRepository.delete(supplier);
     }
@@ -120,7 +121,7 @@ public class SupplierServiceImpl implements SupplierService {
     public SupplierResponse getSupplierById(Integer supplierId) {
 
         Supplier supplier = supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.SUPPLIER_NOT_FOUND));
 
         return supplierMapper.toResponse(supplier);
     }
