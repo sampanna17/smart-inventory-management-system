@@ -6,6 +6,7 @@ import com.smartinventorysystem.modules.user.dto.response.CreateStaffResponse;
 import com.smartinventorysystem.modules.user.dto.response.UserResponse;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService {
     UserResponse updateProfile(Integer userId, UpdateProfileRequest request);
@@ -16,4 +17,6 @@ public interface UserService {
     UserResponse getUserById(Integer userId);
     void deactivateStaff(Integer staffId);
     void activateStaff(Integer userId);
+    String getUserFullName(Integer userId);
+    Map<Integer, String> getUserFullNames(List<Integer> userIds);
 }

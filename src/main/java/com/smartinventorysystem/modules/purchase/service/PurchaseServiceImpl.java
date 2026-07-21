@@ -19,7 +19,7 @@ import com.smartinventorysystem.modules.purchase.repository.PurchaseRepository;
 import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
 import com.smartinventorysystem.modules.user.entity.User;
-import com.smartinventorysystem.modules.user.repository.UserRepository;
+import com.smartinventorysystem.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +38,11 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
     private final ProductSupplierRepository productSupplierRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PurchaseMapper purchaseMapper;
     private final Clock clock;
+
+    private static final String PURCHASE_NOT_FOUND = "Purchase not found with ID: ";
 
     @Override
     @Transactional
@@ -104,7 +104,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Transactional
     public PurchaseResponse updatePurchase(Integer purchaseId, UpdatePurchaseRequest request) {
         Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
+                .orElseThrow(() -> new ResourceNotFoundException(PURCHASE_NOT_FOUND + purchaseId));
 
         if (purchase.getStatus() != PurchaseStatus.PENDING) {
             throw new BadRequestException("Only pending purchases can be updated.");
@@ -146,10 +146,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         PurchaseResponse response = purchaseMapper.toResponse(updatedPurchase);
 
-        if (updatedPurchase.getUserID() != null) {
-            userRepository.findById(updatedPurchase.getUserID())
-                    .ifPresent(user -> response.setUserName(user.getFullName()));
-        }
+        response.setUserName(
+                userService.getUserFullName(purchase.getUserID())
+        );
 
         return response;
     }
@@ -158,7 +157,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Transactional
     public void deletePurchase(Integer purchaseId) {
         Purchase purchase = purchaseRepository.findById(purchaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
+                .orElseThrow(() -> new ResourceNotFoundException(PURCHASE_NOT_FOUND + purchaseId));
 
         if (purchase.getStatus() == PurchaseStatus.RECEIVED) {
             throw new BadRequestException("Cannot delete a received purchase.");
@@ -170,14 +169,13 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public PurchaseResponse getPurchaseById(Integer purchaseId) {
         Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
+                .orElseThrow(() -> new ResourceNotFoundException(PURCHASE_NOT_FOUND + purchaseId));
 
         PurchaseResponse response = purchaseMapper.toResponse(purchase);
 
-        if (purchase.getUserID() != null) {
-            userRepository.findById(purchase.getUserID())
-                    .ifPresent(user -> response.setUserName(user.getFullName()));
-        }
+        response.setUserName(
+                userService.getUserFullName(purchase.getUserID())
+        );
 
         return response;
     }
@@ -188,17 +186,16 @@ public class PurchaseServiceImpl implements PurchaseService {
         List<Purchase> purchases = purchaseRepository.findAllWithDetails();
         List<PurchaseResponse> responses = purchaseMapper.toResponseList(purchases);
 
-        responses.forEach(response -> {
+        List<Integer> userIds = responses.stream()
+                .map(PurchaseResponse::getUserId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
 
-            if (response.getUserId() != null) {
-                userRepository.findById(response.getUserId())
-                        .ifPresent(user ->
-                                response.setUserName(user.getFullName())
-                        );
-            }
+        Map<Integer, String> userNames = userService.getUserFullNames(userIds);
 
-        });
-
+        responses.forEach(response ->
+                response.setUserName(userNames.get(response.getUserId())));
         return responses;
     }
 
@@ -206,7 +203,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Transactional
     public PurchaseResponse updatePurchaseStatus(Integer purchaseId, UpdatePurchaseStatusRequest request) {
         Purchase purchase = purchaseRepository.findByIdWithDetails(purchaseId)
-                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found with ID: " + purchaseId));
+                .orElseThrow(() -> new ResourceNotFoundException(PURCHASE_NOT_FOUND+ purchaseId));
 
         PurchaseStatus oldStatus = purchase.getStatus();
         PurchaseStatus newStatus = request.getStatus();
@@ -239,13 +236,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         PurchaseResponse response = purchaseMapper.toResponse(updatedPurchase);
 
-        if (updatedPurchase.getUserID() != null) {
-            userRepository.findById(updatedPurchase.getUserID())
-                    .ifPresent(user -> response.setUserName(user.getFullName()));
-        }
-
-
-
+        response.setUserName(
+                userService.getUserFullName(purchase.getUserID())
+        );
 
         return response;
     }
@@ -265,16 +258,17 @@ public class PurchaseServiceImpl implements PurchaseService {
         List<PurchaseResponse> responses =
                 purchaseMapper.toResponseList(purchases);
 
-        responses.forEach(response -> {
+        List<Integer> userIds = responses.stream()
+                .map(PurchaseResponse::getUserId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
 
-            if (response.getUserId() != null) {
-                userRepository.findById(response.getUserId())
-                        .ifPresent(user ->
-                                response.setUserName(user.getFullName())
-                        );
-            }
+        Map<Integer, String> userNames = userService.getUserFullNames(userIds);
 
-        });
+        responses.forEach(response ->
+                response.setUserName(userNames.get(response.getUserId()))
+        );
 
         return responses;
     }
