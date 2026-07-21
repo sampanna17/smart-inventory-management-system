@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.product.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.exceptions.DuplicateProductException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.category.entity.Category;
@@ -52,18 +53,18 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(Integer productId, UpdateProductRequest request) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND));
 
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
 
             product.setCategory(category);
         }
 
         if (request.getUnitId() != null) {
             Unit unit = unitRepository.findById(request.getUnitId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.Unit_NOT_FOUND));
 
             product.setUnit(unit);
         }
@@ -104,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Integer productId) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND));
 
         productRepository.delete(product);
     }
@@ -113,7 +114,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProductById(Integer productId) {
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND));
 
         return productMapper.toResponse(product);
     }
