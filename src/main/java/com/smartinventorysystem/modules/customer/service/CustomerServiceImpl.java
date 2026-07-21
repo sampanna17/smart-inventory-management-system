@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.customer.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.customer.dto.request.CreateCustomerRequest;
@@ -11,6 +12,7 @@ import com.smartinventorysystem.modules.customer.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,20 +22,17 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
+    private final Clock clock;
 
     @Override
     public CustomerResponse createCustomer(CreateCustomerRequest request) {
-
-        if (customerRepository.existsByCustomerName(request.getCustomerName())) {
-            throw new BadRequestException("Customer already exists with name: " + request.getCustomerName());
-        }
 
         if (request.getEmail() != null && customerRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Customer already exists with email: " + request.getEmail());
         }
 
         Customer customer = customerMapper.toEntity(request);
-        customer.setCreatedAt(LocalDateTime.now());
+        customer.setCreatedAt(LocalDateTime.now(clock));
 
         return customerMapper.toResponse(customerRepository.save(customer));
     }
@@ -42,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse updateCustomer(Integer customerId, UpdateCustomerRequest request) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CUSTOMER_NOT_FOUND));
 
         if (request.getCustomerName() != null && !request.getCustomerName().isBlank()) {
             customer.setCustomerName(request.getCustomerName());
@@ -60,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setAddress(request.getAddress());
         }
 
-        customer.setUpdatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now(clock));
 
         return customerMapper.toResponse(customerRepository.save(customer));
     }
@@ -69,7 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
     public void deleteCustomer(Integer customerId) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CUSTOMER_NOT_FOUND));
 
         customerRepository.delete(customer);
     }
@@ -78,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse getCustomerById(Integer customerId) {
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CUSTOMER_NOT_FOUND));
 
         return customerMapper.toResponse(customer);
     }
