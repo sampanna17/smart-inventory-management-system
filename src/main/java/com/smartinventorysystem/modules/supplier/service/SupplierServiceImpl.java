@@ -11,6 +11,7 @@ import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final SupplierMapper supplierMapper;
+    private final Clock clock;
 
     @Override
     public SupplierResponse createSupplier(CreateSupplierRequest request) {
@@ -37,7 +39,7 @@ public class SupplierServiceImpl implements SupplierService {
         }
 
         Supplier supplier = supplierMapper.toEntity(request);
-        supplier.setCreatedAt(LocalDateTime.now());
+        supplier.setCreatedAt(LocalDateTime.now(clock));
 
         return supplierMapper.toResponse(supplierRepository.save(supplier));
     }
@@ -98,7 +100,7 @@ public class SupplierServiceImpl implements SupplierService {
             supplier.setAddress(request.getAddress());
         }
 
-        supplier.setUpdatedAt(LocalDateTime.now());
+        supplier.setUpdatedAt(LocalDateTime.now(clock));
 
         return supplierMapper.toResponse(
                 supplierRepository.save(supplier)
