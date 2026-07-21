@@ -1,6 +1,7 @@
     package com.smartinventorysystem.modules.productimage.service;
 
     import com.smartinventorysystem.common.cloudinary.CloudinaryService;
+    import com.smartinventorysystem.exceptions.ImageNotBelongToProductException;
     import com.smartinventorysystem.exceptions.ResourceNotFoundException;
     import com.smartinventorysystem.modules.product.entity.Product;
     import com.smartinventorysystem.modules.product.repository.ProductRepository;
@@ -75,7 +76,7 @@
                     .getProductId()
                     .equals(productId)){
 
-                throw new RuntimeException("Image does not belong to product");
+                throw new ImageNotBelongToProductException("Image does not belong to product");
             }
 
             // Delete From Cloudinary

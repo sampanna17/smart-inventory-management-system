@@ -108,6 +108,16 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ImageNotBelongToProductException.class)
+    public ResponseEntity<ApiResponse<Void>> handleImageNotBelongToProductException(Exception ex) {
+
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
+    }
+
     private ResponseEntity<ApiResponse<Void>> buildResponse(
             HttpStatus status,
             String message,
