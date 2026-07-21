@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.unit.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.exceptions.DuplicateUnitException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.unit.dto.request.CreateUnitRequest;
@@ -36,7 +37,7 @@ public class UnitServiceImpl implements UnitService {
     public UnitResponse updateUnit(Integer unitId, UpdateUnitRequest request) {
 
         Unit unit = unitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.UNIT_NOT_FOUND));
 
         if (request.getUnitName() != null && !request.getUnitName().isBlank()) {
             unit.setUnitName(request.getUnitName());
@@ -49,7 +50,7 @@ public class UnitServiceImpl implements UnitService {
     public void deleteUnit(Integer unitId) {
 
         Unit unit = unitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.UNIT_NOT_FOUND));
 
         unitRepository.delete(unit);
     }
@@ -58,7 +59,7 @@ public class UnitServiceImpl implements UnitService {
     public UnitResponse getUnitById(Integer unitId) {
 
         Unit unit = unitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("Unit not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.UNIT_NOT_FOUND));
 
         return unitMapper.toResponse(unit);
     }

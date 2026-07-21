@@ -1,7 +1,6 @@
 package com.smartinventorysystem.modules.productsupplier.service;
 
 import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSummaryResponse;
-import com.smartinventorysystem.modules.productsupplier.dto.response.ProductSupplierResponse;
 import com.smartinventorysystem.modules.productsupplier.dto.response.SupplierSummaryResponse;
 
 import java.util.List;
