@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.user.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
@@ -30,9 +31,6 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final UserMapper userMapper;
     private final Clock clock;
-
-    private static final String USER_NOT_FOUND = "User not found";
-    private static final String STAFF_NOT_FOUND = "Staff not found";
 
     @Override
     public CreateStaffResponse createStaff(CreateStaffRequest request) {
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse updateProfile(Integer userId, UpdateProfileRequest request) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.USER_NOT_FOUND));
 
         // update only allowed fields (
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
@@ -98,7 +96,7 @@ public class UserServiceImpl implements UserService {
     public void deleteAdmin(Integer adminId) {
 
         User user = userRepository.findById(adminId)
-                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.USER_NOT_FOUND));
 
         if (user.getRole() != Role.ADMIN) {
             throw new BadRequestException("Only admin accounts can be deleted.");
@@ -111,7 +109,7 @@ public class UserServiceImpl implements UserService {
     public void deleteStaff(Integer staffId) {
 
         User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.STAFF_NOT_FOUND));
 
         if (staff.getRole() != Role.STAFF) {
             throw new BadRequestException("Only staff accounts can be deleted.");
@@ -128,7 +126,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Integer userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.USER_NOT_FOUND));
 
         return userMapper.toResponse(user);
     }
@@ -137,7 +135,7 @@ public class UserServiceImpl implements UserService {
     public void deactivateStaff(Integer staffId) {
 
         User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.STAFF_NOT_FOUND));
 
         if (staff.getRole() != Role.STAFF) {
             throw new BadRequestException("Only staff accounts can be deactivated.");
@@ -156,7 +154,7 @@ public class UserServiceImpl implements UserService {
     public void activateStaff(Integer staffId) {
 
         User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.STAFF_NOT_FOUND));
 
         if (staff.getRole() != Role.STAFF) {
             throw new BadRequestException("Only staff accounts can be activated.");

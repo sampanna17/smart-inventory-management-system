@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.category.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.exceptions.DuplicateCategoryException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.modules.category.dto.request.CreateCategoryRequest;
@@ -11,6 +12,7 @@ import com.smartinventorysystem.modules.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final Clock clock;
 
     @Override
     public CategoryResponse createCategory(CreateCategoryRequest request) {
@@ -29,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         Category category = categoryMapper.toEntity(request);
-        category.setCreatedAt(LocalDateTime.now());
+        category.setCreatedAt(LocalDateTime.now(clock));
 
         return categoryMapper.toResponse(categoryRepository.save(category));
     }
@@ -38,7 +41,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse updateCategory(Integer id, UpdateCategoryRequest request) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
 
         if (request.getCategoryName() != null && !request.getCategoryName().isBlank()) {
 
@@ -58,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setDescription(request.getDescription());
         }
 
-        category.setUpdatedAt(LocalDateTime.now());
+        category.setUpdatedAt(LocalDateTime.now(clock));
 
         return categoryMapper.toResponse(categoryRepository.save(category));
     }
@@ -67,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Integer id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
 
         categoryRepository.delete(category);
     }
@@ -76,7 +79,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryResponse getCategoryById(Integer id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.CATEGORY_NOT_FOUND));
 
         return categoryMapper.toResponse(category);
     }
