@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiRoutes.ProductImages.BASE)
@@ -46,14 +47,16 @@ public class ProductImageController {
     }
 
     @GetMapping(ApiRoutes.ProductImages.GET_ALL)
-    public ResponseEntity<?> getImages(@PathVariable Integer productId){
+    public ResponseEntity<List<ProductImageResponse>> getImages(
+            @PathVariable Integer productId
+    ) {
         return ResponseEntity.ok(
                 productImageService.getImages(productId)
         );
     }
 
     @DeleteMapping(ApiRoutes.ProductImages.DELETE)
-    public ResponseEntity<?> delete(@PathVariable Integer productId, @PathVariable Integer imageId){
+    public ResponseEntity<ApiResponse<ProductImageResponse>> delete(@PathVariable Integer productId, @PathVariable Integer imageId){
 
         productImageService.deleteImage(productId, imageId);
 
