@@ -9,5 +9,6 @@ public class MessageConstants {
     public static final String UNIT_NOT_FOUND = "Unit not found";
     public static final String CATEGORY_NOT_FOUND = "Category not found";
     public static final String PRODUCT_NOT_FOUND = "Product not found";
+    public static final String SUPPLIER_NOT_FOUND = "Supplier not found";
 
 }

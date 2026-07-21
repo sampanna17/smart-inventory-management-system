@@ -64,7 +64,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (request.getUnitId() != null) {
             Unit unit = unitRepository.findById(request.getUnitId())
-                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.Unit_NOT_FOUND));
+                    .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.UNIT_NOT_FOUND));
 
             product.setUnit(unit);
         }
