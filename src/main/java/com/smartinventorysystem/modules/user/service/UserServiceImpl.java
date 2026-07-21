@@ -15,9 +15,12 @@ import com.smartinventorysystem.modules.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,61 +29,10 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final UserMapper userMapper;
+    private final Clock clock;
 
-    @Override
-    public UserResponse updateProfile(Integer userId, UpdateProfileRequest request) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        // update only allowed fields (
-        if (request.getFullName() != null && !request.getFullName().isBlank()) {
-            user.setFullName(request.getFullName());
-        }
-
-        if (request.getEmail() != null && !request.getEmail().isBlank()) {
-
-            // prevent duplicate email
-            boolean emailExists = userRepository.existsByEmail(request.getEmail());
-            if (emailExists) {
-                throw new BadRequestException("Email already in use");
-            }
-
-            user.setEmail(request.getEmail());
-        }
-
-        user.setUpdatedAt(LocalDateTime.now());
-
-        User updated = userRepository.save(user);
-
-        return userMapper.toResponse(updated);
-    }
-
-    @Override
-    public void deleteAdmin(Integer adminId) {
-
-        User user = userRepository.findById(adminId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
-        if (user.getRole() != Role.ADMIN) {
-            throw new BadRequestException("Only admin accounts can be deleted.");
-        }
-
-        userRepository.delete(user);
-    }
-
-    @Override
-    public void deleteStaff(Integer staffId) {
-
-        User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new RuntimeException("Staff not found"));
-
-        if (staff.getRole() != Role.STAFF) {
-            throw new RuntimeException("Only staff accounts can be deleted.");
-        }
-
-        userRepository.delete(staff);
-    }
+    private static final String USER_NOT_FOUND = "User not found";
+    private static final String STAFF_NOT_FOUND = "Staff not found";
 
     @Override
     public CreateStaffResponse createStaff(CreateStaffRequest request) {
@@ -99,8 +51,8 @@ public class UserServiceImpl implements UserService {
         staff.setRole(Role.STAFF);
         staff.setStatus(Status.INACTIVE);
         staff.setActivationToken(token);
-        staff.setTokenExpiry(LocalDateTime.now().plusHours(24));
-        staff.setCreatedAt(LocalDateTime.now());
+        staff.setTokenExpiry(LocalDateTime.now(clock).plusHours(24));
+        staff.setCreatedAt(LocalDateTime.now(clock));
 
         User savedStaff = userRepository.save(staff);
 
@@ -114,6 +66,61 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse updateProfile(Integer userId, UpdateProfileRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+
+        // update only allowed fields (
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+
+            // prevent duplicate email
+            boolean emailExists = userRepository.existsByEmail(request.getEmail());
+            if (emailExists) {
+                throw new BadRequestException("Email already in use");
+            }
+
+            user.setEmail(request.getEmail());
+        }
+
+        user.setUpdatedAt(LocalDateTime.now(clock));
+
+        User updated = userRepository.save(user);
+
+        return userMapper.toResponse(updated);
+    }
+
+    @Override
+    public void deleteAdmin(Integer adminId) {
+
+        User user = userRepository.findById(adminId)
+                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new BadRequestException("Only admin accounts can be deleted.");
+        }
+
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void deleteStaff(Integer staffId) {
+
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
+
+        if (staff.getRole() != Role.STAFF) {
+            throw new BadRequestException("Only staff accounts can be deleted.");
+        }
+
+        userRepository.delete(staff);
+    }
+
+    @Override
     public List<UserResponse> getAllUsers() {
         return userMapper.toResponseList(userRepository.findAll());
     }
@@ -121,7 +128,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Integer userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(USER_NOT_FOUND));
 
         return userMapper.toResponse(user);
     }
@@ -130,7 +137,7 @@ public class UserServiceImpl implements UserService {
     public void deactivateStaff(Integer staffId) {
 
         User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
 
         if (staff.getRole() != Role.STAFF) {
             throw new BadRequestException("Only staff accounts can be deactivated.");
@@ -149,7 +156,7 @@ public class UserServiceImpl implements UserService {
     public void activateStaff(Integer staffId) {
 
         User staff = userRepository.findById(staffId)
-                .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(STAFF_NOT_FOUND));
 
         if (staff.getRole() != Role.STAFF) {
             throw new BadRequestException("Only staff accounts can be activated.");
@@ -162,6 +169,29 @@ public class UserServiceImpl implements UserService {
         staff.setStatus(Status.ACTIVE);
 
         userRepository.save(staff);
+    }
+
+    @Override
+    public String getUserFullName(Integer userId) {
+
+        if (userId == null) {
+            return null;
+        }
+
+        return userRepository.findById(userId)
+                .map(User::getFullName)
+                .orElse(null);
+    }
+
+    @Override
+    public Map<Integer, String> getUserFullNames(List<Integer> userIds) {
+
+        return userRepository.findAllById(userIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        User::getUserID,
+                        User::getFullName
+                ));
     }
 
 }
