@@ -14,6 +14,8 @@ public final class ApiRoutes {
         public static final String LOGOUT = "/logout";
         public static final String ACTIVATE = "/activate";
         public static final String RESEND_ACTIVATE = "/resend-activation";
+        public static final String FORGOT_PASSWORD = "/forgot-password";
+        public static final String RESET_PASSWORD = "/reset-password";
 
         private Auth() {}
     }

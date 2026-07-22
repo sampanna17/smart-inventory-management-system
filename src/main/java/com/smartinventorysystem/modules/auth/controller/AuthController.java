@@ -7,6 +7,8 @@ import com.smartinventorysystem.modules.auth.dto.request.ResendActivationRequest
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
 import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
 import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
+import com.smartinventorysystem.modules.auth.dto.request.ForgotPasswordRequest;
+import com.smartinventorysystem.modules.auth.dto.request.ResetPasswordRequest;
 import com.smartinventorysystem.modules.auth.service.AuthService;
 import com.smartinventorysystem.security.JwtUtil;
 import jakarta.validation.Valid;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 @RestController
@@ -24,6 +27,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
+    private final Clock clock;
 
     @PostMapping(ApiRoutes.Auth.SIGNUP)
     public ResponseEntity<ApiResponse<AuthResponse>> signup(@Valid @RequestBody SignupRequest request) {
@@ -34,7 +38,7 @@ public class AuthController {
                         .success(true)
                         .message("Signup successful")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -48,7 +52,7 @@ public class AuthController {
                         .success(true)
                         .message("Login successful")
                         .data(response)
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -61,7 +65,7 @@ public class AuthController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Logged out successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -77,7 +81,7 @@ public class AuthController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Staff Account Activated Successfully")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -93,8 +97,42 @@ public class AuthController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("New activation link has been sent.")
+                        .timestamp(LocalDateTime.now(clock))
+                        .build()
+        );
+    }
+
+
+    @PostMapping(ApiRoutes.Auth.FORGOT_PASSWORD)
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+
+        authService.forgotPassword(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
+                        .success(true)
+                        .message("Password reset link has been sent to your email.")
                         .timestamp(LocalDateTime.now())
                         .build()
         );
     }
+
+    @PostMapping(ApiRoutes.Auth.RESET_PASSWORD)
+    public ResponseEntity<ApiResponse<Void>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request) {
+
+        authService.resetPassword(request);
+
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .status(HttpStatus.OK.value())
+                        .success(true)
+                        .message("Password has been reset successfully.")
+                        .timestamp(LocalDateTime.now())
+                        .build()
+        );
+    }
+
 }
