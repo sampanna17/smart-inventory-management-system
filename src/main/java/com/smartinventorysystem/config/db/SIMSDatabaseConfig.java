@@ -26,7 +26,8 @@ import java.util.Map;
                 "com.smartinventorysystem.modules.unit.repository",
                 "com.smartinventorysystem.modules.supplier.repository",
                 "com.smartinventorysystem.modules.customer.repository",
-                "com.smartinventorysystem.modules.purchase.repository"
+                "com.smartinventorysystem.modules.purchase.repository",
+                "com.smartinventorysystem.modules.sale.repository"
         },
         entityManagerFactoryRef = "simsEntityManagerFactory",
         transactionManagerRef = "simsTransactionManager"
@@ -57,7 +58,7 @@ public class SIMSDatabaseConfig {
                 "com.smartinventorysystem.modules.supplier.entity",
                 "com.smartinventorysystem.modules.customer.entity",
                 "com.smartinventorysystem.modules.purchase.entity",
-                "com.smartinventorysystem.modules.sales.entity",
+                "com.smartinventorysystem.modules.sale.entity",
                 "com.smartinventorysystem.modules.productsupplier.entity"
         );
 
