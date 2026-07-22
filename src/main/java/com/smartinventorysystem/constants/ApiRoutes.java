@@ -129,4 +129,18 @@ public final class ApiRoutes {
         private Purchases() {}
     }
 
+    public static final class Sales {
+        public static final String BASE = API + "/sales";
+
+        public static final String CREATE = "/create";
+        public static final String UPDATE = "/update/{saleId}";
+        public static final String DELETE = "/{saleId}";
+        public static final String GET_BY_ID = "/{saleId}";
+        public static final String GET_ALL = "";
+        public static final String UPDATE_STATUS = "/{saleId}/status";
+        public static final String GET_BY_CUSTOMER = "/customer/{customerId}";
+        public static final String GET_BY_STATUS = "/status/{status}";
+        private Sales() {}
+    }
+
 }

@@ -14,4 +14,6 @@ public final class MessageConstants {
     public static final String SALE_NOT_FOUND_MSG = "Sale not found with ID: ";
     public static final String PRODUCT_NOT_FOUND_MSG = "Product not found with ID: ";
 
+    public static final String SALE_FETCHED = "Sale fetched successfully";
+
 }
