@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ResetPasswordEmail {
+public class ResetPasswordEmail implements ResetPasswordEmailService{
 
     private final JavaMailSender mailSender;
 
