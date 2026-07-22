@@ -1,25 +1,26 @@
 package com.smartinventorysystem.modules.auth.service;
 
 import com.smartinventorysystem.common.email.EmailService;
+import com.smartinventorysystem.common.email.ResetPasswordEmail;
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.UnauthorizedException;
-import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
-import com.smartinventorysystem.modules.auth.dto.request.ResendActivationRequest;
+import com.smartinventorysystem.modules.auth.dto.request.*;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
-import com.smartinventorysystem.modules.auth.dto.request.LoginRequest;
-import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.mapper.AuthUserMapper;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.security.JwtUtil;
 import com.smartinventorysystem.security.TokenBlacklist;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -32,7 +33,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final TokenBlacklist tokenBlacklist;
+    private final Clock clock;
     private final EmailService emailService;
+    private final ResetPasswordEmail resetPasswordEmail;
 
     @Override
     public AuthResponse signup(SignupRequest request) {
@@ -46,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(Role.ADMIN);
 
         user.setStatus(Status.ACTIVE);
-        user.setCreatedAt(LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now(clock));
 
         return authUserMapper.toResponse(userRepository.save(user));
     }
@@ -55,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UnauthorizedException("User not found"));
+                .orElseThrow(() -> new UnauthorizedException(MessageConstants.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new UnauthorizedException("Invalid password");
@@ -84,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new BadRequestException("Invalid activation token"));
 
         // check expiry
-        if (user.getTokenExpiry().isBefore(LocalDateTime.now())) {
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now(clock))) {
             throw new BadRequestException("Activation link expired");
         }
 
@@ -99,7 +102,7 @@ public class AuthServiceImpl implements AuthService {
         user.setTokenExpiry(null);
 
         // Update
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now(clock));
         userRepository.save(user);
     }
 
@@ -107,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
     public void resendActivationLink(ResendActivationRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadRequestException("User not found"));
+                .orElseThrow(() -> new BadRequestException(MessageConstants.UNIT_NOT_FOUND));
 
         if (user.getStatus() == Status.ACTIVE) {
             throw new BadRequestException("Account is already activated");
@@ -116,8 +119,8 @@ public class AuthServiceImpl implements AuthService {
         String token = UUID.randomUUID().toString();
 
         user.setActivationToken(token);
-        user.setTokenExpiry(LocalDateTime.now().plusHours(24));
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setTokenExpiry(LocalDateTime.now(clock).plusHours(24));
+        user.setUpdatedAt(LocalDateTime.now(clock));
 
         userRepository.save(user);
 
@@ -127,4 +130,40 @@ public class AuthServiceImpl implements AuthService {
                 token
         );
     }
+
+    @Override
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("User not found with email: " + request.getEmail()));
+        String token = java.util.UUID.randomUUID().toString();
+        // Reusing activationToken & tokenExpiry as requested
+        user.setActivationToken(token);
+        user.setTokenExpiry(LocalDateTime.now(clock).plusHours(24));
+        user.setUpdatedAt(LocalDateTime.now(clock));
+        userRepository.save(user);
+        resetPasswordEmail.sendResetPasswordEmail(
+                user.getEmail(),
+                user.getFullName(),
+                token
+        );
+    }
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        User user = userRepository.findByActivationToken(request.getToken())
+                .orElseThrow(() -> new BadRequestException("Invalid or expired password reset token"));
+        if (user.getTokenExpiry().isBefore(LocalDateTime.now(clock))) {
+            throw new BadRequestException("Password reset link expired");
+        }
+        // Set password and activate account if not already active (just in case)
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setStatus(com.smartinventorysystem.enums.Status.ACTIVE);
+        // Clear token
+        user.setActivationToken(null);
+        user.setTokenExpiry(null);
+        user.setUpdatedAt(LocalDateTime.now(clock));
+        userRepository.save(user);
+    }
+
 }
