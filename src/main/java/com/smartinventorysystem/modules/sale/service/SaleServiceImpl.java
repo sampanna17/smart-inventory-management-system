@@ -37,12 +37,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
+import java.security.SecureRandom;
 
 
 @Service
 @RequiredArgsConstructor
 public class SaleServiceImpl implements SaleService {
+
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final SaleRepository saleRepository;
     private final SaleDetailRepository saleDetailRepository;
@@ -257,15 +259,18 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private String generateInvoiceNumber() {
-        String dateStr = DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDateTime.now(clock));
-        Random random = new Random();
-        String randomSuffix = String.format("%05d", random.nextInt(100000));
-        String invoiceNumber = "INV-" + dateStr + "-" + randomSuffix;
 
-        while (saleRepository.findByInvoiceNumber(invoiceNumber).isPresent()) {
-            randomSuffix = String.format("%05d", random.nextInt(100000));
+        String dateStr = DateTimeFormatter.ofPattern("yyyyMMdd")
+                .format(LocalDateTime.now(clock));
+
+        String invoiceNumber;
+
+        do {
+            String randomSuffix = String.format("%05d", RANDOM.nextInt(100000));
             invoiceNumber = "INV-" + dateStr + "-" + randomSuffix;
-        }
+
+        } while (saleRepository.findByInvoiceNumber(invoiceNumber).isPresent());
+
         return invoiceNumber;
     }
 
