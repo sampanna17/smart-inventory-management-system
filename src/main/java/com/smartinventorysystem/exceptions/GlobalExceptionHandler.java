@@ -118,6 +118,23 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InsufficientStockException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInsufficientStock(InsufficientStockException ex) {
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
+    }
+    @ExceptionHandler(InvalidSaleStatusException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidSaleStatus(InvalidSaleStatusException ex) {
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                null
+        );
+    }
+
     private ResponseEntity<ApiResponse<Void>> buildResponse(
             HttpStatus status,
             String message,
