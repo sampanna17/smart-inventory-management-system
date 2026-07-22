@@ -1,7 +1,6 @@
 package com.smartinventorysystem.modules.auth.controller;
 
 import com.smartinventorysystem.common.dto.ApiResponse;
-import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.modules.auth.dto.request.ActivateAccountRequest;
 import com.smartinventorysystem.modules.auth.dto.request.ResendActivationRequest;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
@@ -10,11 +9,12 @@ import com.smartinventorysystem.modules.auth.dto.request.SignupRequest;
 import com.smartinventorysystem.modules.auth.dto.request.ForgotPasswordRequest;
 import com.smartinventorysystem.modules.auth.dto.request.ResetPasswordRequest;
 import com.smartinventorysystem.modules.auth.service.AuthService;
+import com.smartinventorysystem.constants.ApiRoutes;
 import com.smartinventorysystem.security.JwtUtil;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Clock;
@@ -102,7 +102,6 @@ public class AuthController {
         );
     }
 
-
     @PostMapping(ApiRoutes.Auth.FORGOT_PASSWORD)
     public ResponseEntity<ApiResponse<Void>> forgotPassword(
             @Valid @RequestBody ForgotPasswordRequest request) {
@@ -114,7 +113,7 @@ public class AuthController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Password reset link has been sent to your email.")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }
@@ -130,7 +129,7 @@ public class AuthController {
                         .status(HttpStatus.OK.value())
                         .success(true)
                         .message("Password has been reset successfully.")
-                        .timestamp(LocalDateTime.now())
+                        .timestamp(LocalDateTime.now(clock))
                         .build()
         );
     }

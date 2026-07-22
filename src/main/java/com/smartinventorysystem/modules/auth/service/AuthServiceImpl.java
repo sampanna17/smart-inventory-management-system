@@ -1,11 +1,12 @@
 package com.smartinventorysystem.modules.auth.service;
 
 import com.smartinventorysystem.common.email.EmailService;
-import com.smartinventorysystem.common.email.ResetPasswordEmail;
+import com.smartinventorysystem.common.email.ResetPasswordEmailService;
 import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.enums.Role;
 import com.smartinventorysystem.enums.Status;
 import com.smartinventorysystem.exceptions.BadRequestException;
+import com.smartinventorysystem.exceptions.EmailAlreadyExistedException;
 import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.auth.dto.request.*;
 import com.smartinventorysystem.modules.auth.dto.response.AuthResponse;
@@ -35,13 +36,13 @@ public class AuthServiceImpl implements AuthService {
     private final TokenBlacklist tokenBlacklist;
     private final Clock clock;
     private final EmailService emailService;
-    private final ResetPasswordEmail resetPasswordEmail;
+    private final ResetPasswordEmailService resetPasswordEmailService;
 
     @Override
     public AuthResponse signup(SignupRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistedException("Email already exists");
         }
 
         User user = authUserMapper.toEntity(request);
@@ -142,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
         user.setTokenExpiry(LocalDateTime.now(clock).plusHours(24));
         user.setUpdatedAt(LocalDateTime.now(clock));
         userRepository.save(user);
-        resetPasswordEmail.sendResetPasswordEmail(
+        resetPasswordEmailService.sendResetPasswordEmail(
                 user.getEmail(),
                 user.getFullName(),
                 token
