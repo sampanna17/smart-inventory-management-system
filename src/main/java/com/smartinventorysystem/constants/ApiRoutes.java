@@ -145,4 +145,18 @@ public final class ApiRoutes {
         private Sales() {}
     }
 
+    public static final class StockMovements {
+        public static final String BASE = API + "/stock-movements";
+
+        public static final String CREATE = "/create";
+        public static final String GET_BY_ID = "/{movementId}";
+        public static final String GET_ALL = "";
+        public static final String GET_BY_PRODUCT = "/product/{productId}";
+        public static final String GET_BY_USER = "/user/{userId}";
+        public static final String GET_BY_TYPE = "/type/{movementType}";
+        public static final String DELETE = "/{movementId}";
+
+        private StockMovements() {}
+    }
+
 }
