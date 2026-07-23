@@ -6,7 +6,6 @@ import com.smartinventorysystem.enums.SaleStatus;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.exceptions.InsufficientStockException;
 import com.smartinventorysystem.exceptions.InvalidSaleStatusException;
-import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.customer.entity.Customer;
 import com.smartinventorysystem.modules.customer.repository.CustomerRepository;
 import com.smartinventorysystem.modules.product.entity.Product;
@@ -23,12 +22,11 @@ import com.smartinventorysystem.modules.sale.entity.SaleDetail;
 import com.smartinventorysystem.modules.sale.mapper.SaleMapper;
 import com.smartinventorysystem.modules.sale.repository.SaleRepository;
 import com.smartinventorysystem.modules.sale.repository.SaleDetailRepository;
-import com.smartinventorysystem.modules.stockmovement.entity.StockMovement;
-import com.smartinventorysystem.modules.stockmovement.repository.StockMovementRepository;
+import com.smartinventorysystem.modules.stockmovement.service.StockMovementService;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.smartinventorysystem.utils.AuthenticatedUserProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,15 +50,16 @@ public class SaleServiceImpl implements SaleService {
     private final SaleDetailRepository saleDetailRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
-    private final StockMovementRepository stockMovementRepository;
+    private final StockMovementService stockMovementService;
     private final UserService userService;
     private final SaleMapper saleMapper;
     private final Clock clock;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     @Transactional
     public SaleResponse createSale(CreateSaleRequest request) {
-        User user = getAuthenticatedUser();
+        User user = authenticatedUserProvider.getCurrentUser();
         Customer customer = getCustomerIfPresent(request.getCustomerId());
 
         Sale sale = new Sale();
@@ -79,7 +78,7 @@ public class SaleServiceImpl implements SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND_MSG + itemReq.getProductId()));
 
             validateAndDeductStock(product, itemReq.getQuantity());
-            recordStockMovement(
+            stockMovementService.recordMovement(
                     product,
                     itemReq.getQuantity(),
                     MovementType.SALE,
@@ -138,7 +137,7 @@ public class SaleServiceImpl implements SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND_MSG + itemReq.getProductId()));
 
             validateAndDeductStock(product, itemReq.getQuantity());
-            recordStockMovement(
+            stockMovementService.recordMovement(
                     product,
                     itemReq.getQuantity(),
                     MovementType.SALE,
@@ -268,14 +267,6 @@ public class SaleServiceImpl implements SaleService {
         return mapToSummaryResponses(sales);
     }
 
-    private User getAuthenticatedUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
-            throw new UnauthorizedException("Unauthorized access");
-        }
-        return user;
-    }
-
     private Customer getCustomerIfPresent(Integer customerId) {
         if (customerId == null) {
             return null;
@@ -315,7 +306,7 @@ public class SaleServiceImpl implements SaleService {
             product.setStockQuantity(currentStock + detail.getQuantity());
             productRepository.save(product);
 
-            recordStockMovement(
+            stockMovementService.recordMovement(
                     product,
                     detail.getQuantity(),
                     MovementType.ADJUSTMENT,
@@ -340,7 +331,7 @@ public class SaleServiceImpl implements SaleService {
             product.setStockQuantity(currentStock - detail.getQuantity());
             productRepository.save(product);
 
-            recordStockMovement(
+            stockMovementService.recordMovement(
                     product,
                     detail.getQuantity(),
                     MovementType.SALE,
@@ -348,21 +339,6 @@ public class SaleServiceImpl implements SaleService {
                     remarks
             );
         }
-    }
-
-    private void recordStockMovement(Product product,
-                                     Integer quantity,
-                                     MovementType movementType,
-                                     Integer userId,
-                                     String remarks) {
-        StockMovement movement = new StockMovement();
-        movement.setProduct(product);
-        movement.setUserID(userId);
-        movement.setMovementType(movementType);
-        movement.setQuantity(quantity);
-        movement.setMovementDate(LocalDateTime.now(clock));
-        movement.setRemarks(remarks);
-        stockMovementRepository.save(movement);
     }
 
     private List<SaleSummaryResponse> mapToSummaryResponses(List<Sale> sales) {
