@@ -1,6 +1,7 @@
 package com.smartinventorysystem.modules.sale.service;
 
 import com.smartinventorysystem.constants.MessageConstants;
+import com.smartinventorysystem.enums.MovementType;
 import com.smartinventorysystem.enums.SaleStatus;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
 import com.smartinventorysystem.exceptions.InsufficientStockException;
@@ -22,6 +23,8 @@ import com.smartinventorysystem.modules.sale.entity.SaleDetail;
 import com.smartinventorysystem.modules.sale.mapper.SaleMapper;
 import com.smartinventorysystem.modules.sale.repository.SaleRepository;
 import com.smartinventorysystem.modules.sale.repository.SaleDetailRepository;
+import com.smartinventorysystem.modules.stockmovement.entity.StockMovement;
+import com.smartinventorysystem.modules.stockmovement.repository.StockMovementRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +42,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.security.SecureRandom;
 
-
 @Service
 @RequiredArgsConstructor
 public class SaleServiceImpl implements SaleService {
@@ -50,6 +52,7 @@ public class SaleServiceImpl implements SaleService {
     private final SaleDetailRepository saleDetailRepository;
     private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
+    private final StockMovementRepository stockMovementRepository;
     private final UserService userService;
     private final SaleMapper saleMapper;
     private final Clock clock;
@@ -76,6 +79,13 @@ public class SaleServiceImpl implements SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND_MSG + itemReq.getProductId()));
 
             validateAndDeductStock(product, itemReq.getQuantity());
+            recordStockMovement(
+                    product,
+                    itemReq.getQuantity(),
+                    MovementType.SALE,
+                    user.getUserID(),
+                    "Stock deducted for sale " + sale.getInvoiceNumber()
+            );
 
             SaleDetail detail = new SaleDetail();
             detail.setSale(sale);
@@ -113,9 +123,12 @@ public class SaleServiceImpl implements SaleService {
         sale.setCustomer(customer);
         sale.setSaleDate(request.getSaleDate());
 
-        // Restore previous stock
         List<SaleDetail> oldDetails = saleDetailRepository.findBySaleIdWithProduct(saleId);
-        restoreStock(oldDetails);
+        restoreStock(
+                oldDetails,
+                sale.getUserID(),
+                "Sale stock restored for update " + sale.getInvoiceNumber()
+        );
 
         List<SaleDetail> newDetails = new ArrayList<>();
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -125,6 +138,13 @@ public class SaleServiceImpl implements SaleService {
                     .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND_MSG + itemReq.getProductId()));
 
             validateAndDeductStock(product, itemReq.getQuantity());
+            recordStockMovement(
+                    product,
+                    itemReq.getQuantity(),
+                    MovementType.SALE,
+                    sale.getUserID(),
+                    "Stock deducted for sale update " + sale.getInvoiceNumber()
+            );
 
             SaleDetail detail = new SaleDetail();
             detail.setSale(sale);
@@ -141,7 +161,6 @@ public class SaleServiceImpl implements SaleService {
 
         sale.setTotalAmount(totalAmount);
 
-        // Remove old details and save new details
         saleDetailRepository.deleteBySaleId(saleId);
         List<SaleDetail> savedDetails = saleDetailRepository.saveAll(newDetails);
 
@@ -161,7 +180,11 @@ public class SaleServiceImpl implements SaleService {
         List<SaleDetail> details = saleDetailRepository.findBySaleIdWithProduct(saleId);
 
         if (sale.getStatus() == SaleStatus.COMPLETED) {
-            restoreStock(details);
+            restoreStock(
+                    details,
+                    sale.getUserID(),
+                    "Sale deleted and stock restored " + sale.getInvoiceNumber()
+            );
         }
 
         saleDetailRepository.deleteBySaleId(saleId);
@@ -186,11 +209,18 @@ public class SaleServiceImpl implements SaleService {
 
         List<SaleDetail> details = saleDetailRepository.findBySaleIdWithProduct(saleId);
 
-        // Transition Rules
         if (oldStatus == SaleStatus.COMPLETED && (newStatus == SaleStatus.CANCELLED || newStatus == SaleStatus.REFUNDED)) {
-            restoreStock(details);
+            restoreStock(
+                    details,
+                    sale.getUserID(),
+                    "Sale stock restored for status update " + sale.getInvoiceNumber()
+            );
         } else if ((oldStatus == SaleStatus.CANCELLED || oldStatus == SaleStatus.REFUNDED) && newStatus == SaleStatus.COMPLETED) {
-            deductStock(details);
+            deductStock(
+                    details,
+                    sale.getUserID(),
+                    "Stock deducted for sale status update " + sale.getInvoiceNumber()
+            );
         }
 
         sale.setStatus(newStatus);
@@ -238,10 +268,6 @@ public class SaleServiceImpl implements SaleService {
         return mapToSummaryResponses(sales);
     }
 
-    // ==========================================
-    // PRIVATE HELPER METHODS
-    // ==========================================
-
     private User getAuthenticatedUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
@@ -259,7 +285,6 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private String generateInvoiceNumber() {
-
         String dateStr = DateTimeFormatter.ofPattern("yyyyMMdd")
                 .format(LocalDateTime.now(clock));
 
@@ -283,17 +308,24 @@ public class SaleServiceImpl implements SaleService {
         productRepository.save(product);
     }
 
-    private void restoreStock(List<SaleDetail> details) {
+    private void restoreStock(List<SaleDetail> details, Integer userId, String remarks) {
         for (SaleDetail detail : details) {
             Product product = detail.getProduct();
             int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
             product.setStockQuantity(currentStock + detail.getQuantity());
             productRepository.save(product);
+
+            recordStockMovement(
+                    product,
+                    detail.getQuantity(),
+                    MovementType.ADJUSTMENT,
+                    userId,
+                    remarks
+            );
         }
     }
 
-    private void deductStock(List<SaleDetail> details) {
-        // Validate stock first
+    private void deductStock(List<SaleDetail> details, Integer userId, String remarks) {
         for (SaleDetail detail : details) {
             Product product = detail.getProduct();
             int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
@@ -301,13 +333,36 @@ public class SaleServiceImpl implements SaleService {
                 throw new InsufficientStockException("Insufficient stock for product: " + product.getProductName() + ". Available: " + currentStock + ", Requested: " + detail.getQuantity());
             }
         }
-        // Deduct stock if all are valid
+
         for (SaleDetail detail : details) {
             Product product = detail.getProduct();
             int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
             product.setStockQuantity(currentStock - detail.getQuantity());
             productRepository.save(product);
+
+            recordStockMovement(
+                    product,
+                    detail.getQuantity(),
+                    MovementType.SALE,
+                    userId,
+                    remarks
+            );
         }
+    }
+
+    private void recordStockMovement(Product product,
+                                     Integer quantity,
+                                     MovementType movementType,
+                                     Integer userId,
+                                     String remarks) {
+        StockMovement movement = new StockMovement();
+        movement.setProduct(product);
+        movement.setUserID(userId);
+        movement.setMovementType(movementType);
+        movement.setQuantity(quantity);
+        movement.setMovementDate(LocalDateTime.now(clock));
+        movement.setRemarks(remarks);
+        stockMovementRepository.save(movement);
     }
 
     private List<SaleSummaryResponse> mapToSummaryResponses(List<Sale> sales) {
