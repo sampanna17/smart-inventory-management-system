@@ -1,5 +1,6 @@
 package com.smartinventorysystem.modules.stockmovement.service;
 
+import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.enums.MovementType;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
@@ -33,8 +34,6 @@ public class StockMovementServiceImpl implements StockMovementService {
     private final StockMovementMapper stockMovementMapper;
     private final Clock clock;
 
-    private static final String STOCK_MOVEMENT_NOT_FOUND = "Stock movement not found with ID: ";
-
     @Override
     @Transactional
     public StockMovementResponse createStockMovement(CreateStockMovementRequest request) {
@@ -67,7 +66,7 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Transactional(readOnly = true)
     public StockMovementResponse getStockMovementById(Integer movementId) {
         StockMovement stockMovement = stockMovementRepository.findByIdWithProduct(movementId)
-                .orElseThrow(() -> new ResourceNotFoundException(STOCK_MOVEMENT_NOT_FOUND + movementId));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.STOCK_MOVEMENT_NOT_FOUND + movementId));
 
         StockMovementResponse response = stockMovementMapper.toResponse(stockMovement);
         response.setUserName(getUserFullName(stockMovement.getUserID()));
@@ -88,7 +87,7 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Transactional(readOnly = true)
     public List<StockMovementResponse> getMovementsByProduct(Integer productId) {
         if (!productRepository.existsById(productId)) {
-            throw new ResourceNotFoundException("Product not found with ID: " + productId);
+            throw new ResourceNotFoundException(MessageConstants.PRODUCT_NOT_FOUND_MSG + productId);
         }
 
         List<StockMovement> movements = stockMovementRepository.findByProductWithProduct(productId);
@@ -102,7 +101,7 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Transactional(readOnly = true)
     public List<StockMovementResponse> getMovementsByUser(Integer userId) {
         if (!userRepository.existsById(userId)) {
-            throw new ResourceNotFoundException("User not found with ID: " + userId);
+            throw new ResourceNotFoundException(MessageConstants.USER_NOT_FOUND_WITH_ID + userId);
         }
 
         List<StockMovement> movements = stockMovementRepository.findByUserWithProduct(userId);
@@ -128,7 +127,7 @@ public class StockMovementServiceImpl implements StockMovementService {
     @Transactional
     public void deleteStockMovement(Integer movementId) {
         StockMovement stockMovement = stockMovementRepository.findById(movementId)
-                .orElseThrow(() -> new ResourceNotFoundException(STOCK_MOVEMENT_NOT_FOUND + movementId));
+                .orElseThrow(() -> new ResourceNotFoundException(MessageConstants.STOCK_MOVEMENT_NOT_FOUND + movementId));
 
         if (stockMovement.getMovementType() == MovementType.PURCHASE
                 || stockMovement.getMovementType() == MovementType.SALE) {
