@@ -4,7 +4,6 @@ import com.smartinventorysystem.constants.MessageConstants;
 import com.smartinventorysystem.enums.MovementType;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.product.entity.Product;
 import com.smartinventorysystem.modules.product.repository.ProductRepository;
 import com.smartinventorysystem.modules.stockmovement.dto.request.CreateStockMovementRequest;
@@ -14,14 +13,16 @@ import com.smartinventorysystem.modules.stockmovement.mapper.StockMovementMapper
 import com.smartinventorysystem.modules.stockmovement.repository.StockMovementRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.repository.UserRepository;
+import com.smartinventorysystem.modules.user.service.UserService;
+import com.smartinventorysystem.utils.AuthenticatedUserProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -30,14 +31,16 @@ public class StockMovementServiceImpl implements StockMovementService {
 
     private final StockMovementRepository stockMovementRepository;
     private final ProductRepository productRepository;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final StockMovementMapper stockMovementMapper;
     private final Clock clock;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     @Override
     @Transactional
     public StockMovementResponse createStockMovement(CreateStockMovementRequest request) {
-        User authenticatedUser = getAuthenticatedUser();
+        User authenticatedUser = authenticatedUserProvider.getCurrentUser();
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -137,12 +140,23 @@ public class StockMovementServiceImpl implements StockMovementService {
         stockMovementRepository.delete(stockMovement);
     }
 
-    private User getAuthenticatedUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
-            throw new UnauthorizedException("Unauthorized access");
-        }
-        return user;
+    @Override
+    @Transactional
+    public void recordMovement(Product product,
+                               Integer quantity,
+                               MovementType movementType,
+                               Integer userId,
+                               String remarks) {
+
+        StockMovement movement = new StockMovement();
+        movement.setProduct(product);
+        movement.setUserID(userId);
+        movement.setMovementType(movementType);
+        movement.setQuantity(quantity);
+        movement.setMovementDate(LocalDateTime.now(clock));
+        movement.setRemarks(remarks);
+
+        stockMovementRepository.save(movement);
     }
 
     private void validateMovementQuantity(Integer quantity) {
@@ -180,12 +194,16 @@ public class StockMovementServiceImpl implements StockMovementService {
             return;
         }
 
-        responses.forEach(response -> response.setUserName(getUserFullName(response.getUserId())));
+        Map<Integer, String> userNames = userService.getUserFullNames(userIds);
+
+        responses.forEach(response ->
+                response.setUserName(userNames.get(response.getUserId()))
+        );
     }
 
     private String getUserFullName(Integer userId) {
-        return userRepository.findById(userId)
-                .map(User::getFullName)
-                .orElse(null);
+        return userService.getUserFullName(userId);
     }
+
+
 }

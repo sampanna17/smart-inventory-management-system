@@ -3,7 +3,6 @@ package com.smartinventorysystem.modules.purchase.service;
 import com.smartinventorysystem.enums.PurchaseStatus;
 import com.smartinventorysystem.exceptions.BadRequestException;
 import com.smartinventorysystem.exceptions.ResourceNotFoundException;
-import com.smartinventorysystem.exceptions.UnauthorizedException;
 import com.smartinventorysystem.modules.product.entity.Product;
 import com.smartinventorysystem.modules.product.repository.ProductRepository;
 import com.smartinventorysystem.modules.productsupplier.repository.ProductSupplierRepository;
@@ -16,16 +15,15 @@ import com.smartinventorysystem.modules.purchase.entity.Purchase;
 import com.smartinventorysystem.modules.purchase.entity.PurchaseDetail;
 import com.smartinventorysystem.modules.purchase.mapper.PurchaseMapper;
 import com.smartinventorysystem.modules.purchase.repository.PurchaseRepository;
+import com.smartinventorysystem.modules.stockmovement.service.StockMovementService;
 import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
 import com.smartinventorysystem.enums.MovementType;
-import com.smartinventorysystem.modules.stockmovement.entity.StockMovement;
-import com.smartinventorysystem.modules.stockmovement.repository.StockMovementRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.smartinventorysystem.utils.AuthenticatedUserProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,20 +40,18 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
     private final ProductSupplierRepository productSupplierRepository;
-    private final StockMovementRepository stockMovementRepository;
+    private final StockMovementService stockMovementService;
     private final UserService userService;
     private final PurchaseMapper purchaseMapper;
     private final Clock clock;
+    private final AuthenticatedUserProvider authenticatedUserProvider;
 
     private static final String PURCHASE_NOT_FOUND = "Purchase not found with ID: ";
 
     @Override
     @Transactional
     public PurchaseResponse createPurchase(CreatePurchaseRequest request) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
-            throw new UnauthorizedException("Unauthorized access");
-        }
+        User user = authenticatedUserProvider.getCurrentUser();
 
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
                 .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with ID: " + request.getSupplierId()));
@@ -224,7 +220,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
                 product.setStockQuantity(currentStock + detail.getQuantity());
                 productRepository.save(product);
-                recordStockMovement(
+                stockMovementService.recordMovement(
                         product,
                         detail.getQuantity(),
                         MovementType.PURCHASE,
@@ -238,7 +234,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
                 product.setStockQuantity(currentStock - detail.getQuantity());
                 productRepository.save(product);
-                recordStockMovement(
+                stockMovementService.recordMovement(
                         product,
                         detail.getQuantity(),
                         MovementType.ADJUSTMENT,
@@ -303,21 +299,6 @@ public class PurchaseServiceImpl implements PurchaseService {
                             product.getProductName() + "'"
             );
         }
-    }
-
-    private void recordStockMovement(Product product,
-                                     Integer quantity,
-                                     MovementType movementType,
-                                     Integer userId,
-                                     String remarks) {
-        StockMovement movement = new StockMovement();
-        movement.setProduct(product);
-        movement.setUserID(userId);
-        movement.setMovementType(movementType);
-        movement.setQuantity(quantity);
-        movement.setMovementDate(LocalDateTime.now(clock));
-        movement.setRemarks(remarks);
-        stockMovementRepository.save(movement);
     }
 }
 
