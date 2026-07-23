@@ -20,6 +20,10 @@ import com.smartinventorysystem.modules.supplier.entity.Supplier;
 import com.smartinventorysystem.modules.supplier.repository.SupplierRepository;
 import com.smartinventorysystem.modules.user.entity.User;
 import com.smartinventorysystem.modules.user.service.UserService;
+import com.smartinventorysystem.enums.MovementType;
+import com.smartinventorysystem.modules.stockmovement.entity.StockMovement;
+import com.smartinventorysystem.modules.stockmovement.repository.StockMovementRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,6 +42,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final ProductRepository productRepository;
     private final SupplierRepository supplierRepository;
     private final ProductSupplierRepository productSupplierRepository;
+    private final StockMovementRepository stockMovementRepository;
     private final UserService userService;
     private final PurchaseMapper purchaseMapper;
     private final Clock clock;
@@ -219,6 +224,13 @@ public class PurchaseServiceImpl implements PurchaseService {
                 int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
                 product.setStockQuantity(currentStock + detail.getQuantity());
                 productRepository.save(product);
+                recordStockMovement(
+                        product,
+                        detail.getQuantity(),
+                        MovementType.PURCHASE,
+                        purchase.getUserID(),
+                        "Stock received from purchase " + purchase.getPurchaseNumber()
+                );
             }
         } else if (oldStatus == PurchaseStatus.RECEIVED) {
             for (PurchaseDetail detail : purchase.getPurchaseDetails()) {
@@ -226,6 +238,13 @@ public class PurchaseServiceImpl implements PurchaseService {
                 int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
                 product.setStockQuantity(currentStock - detail.getQuantity());
                 productRepository.save(product);
+                recordStockMovement(
+                        product,
+                        detail.getQuantity(),
+                        MovementType.ADJUSTMENT,
+                        purchase.getUserID(),
+                        "Purchase receipt reversed for " + purchase.getPurchaseNumber()
+                );
             }
         }
 
@@ -284,6 +303,21 @@ public class PurchaseServiceImpl implements PurchaseService {
                             product.getProductName() + "'"
             );
         }
+    }
+
+    private void recordStockMovement(Product product,
+                                     Integer quantity,
+                                     MovementType movementType,
+                                     Integer userId,
+                                     String remarks) {
+        StockMovement movement = new StockMovement();
+        movement.setProduct(product);
+        movement.setUserID(userId);
+        movement.setMovementType(movementType);
+        movement.setQuantity(quantity);
+        movement.setMovementDate(LocalDateTime.now(clock));
+        movement.setRemarks(remarks);
+        stockMovementRepository.save(movement);
     }
 }
 
