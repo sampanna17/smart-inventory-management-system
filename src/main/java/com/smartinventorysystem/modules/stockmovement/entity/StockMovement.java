@@ -2,7 +2,6 @@ package com.smartinventorysystem.modules.stockmovement.entity;
 
 import com.smartinventorysystem.enums.MovementType;
 import com.smartinventorysystem.modules.product.entity.Product;
-import com.smartinventorysystem.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
