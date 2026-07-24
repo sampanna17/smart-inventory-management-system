@@ -1,4 +1,4 @@
 package com.smartinventorysystem.modules.notification.service;
 
-public class notificationService {
+public interface notificationService {
 }

@@ -1,6 +1,5 @@
 package com.smartinventorysystem.modules.notification.entity;
 
-import com.smartinventorysystem.modules.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -14,9 +13,7 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer notificationID;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")
-    private User user;
+    private Integer userID;
 
     private String title;
 
