@@ -159,4 +159,16 @@ public final class ApiRoutes {
         private StockMovements() {}
     }
 
+    public static final class Notifications {
+        public static final String BASE = API + "/notifications";
+
+        public static final String GET_ALL = "";
+        public static final String MARK_AS_READ = "/{notificationId}/read";
+        public static final String MARK_ALL_AS_READ = "/read-all";
+        public static final String DELETE = "/{notificationId}";
+        public static final String UNREAD_COUNT = "/unread-count";
+
+        private Notifications() {}
+    }
+
 }
