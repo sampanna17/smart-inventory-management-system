@@ -1,0 +1,114 @@
+# ==========================================
+# Root .gitignore for Smart Inventory System
+# ==========================================
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+*.pem
+*.key
+*.p12
+*.keystore
+
+# Logs & Temporary Files
+*.log
+logs/
+**/logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tmp/
+temp/
+**/tmp/
+
+# IDEs & Editor Configuration
+.idea/
+*.iws
+*.iml
+*.ipr
+.project
+.classpath
+.factorypath
+.settings/
+.springBeans
+.sts4-cache
+.apt_generated
+.c9/
+*.launch
+*.sublime-workspace
+.history/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+
+# ------------------------------------------
+# Backend (Java / Spring Boot / Maven / Gradle)
+# ------------------------------------------
+**/target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Compiled Java class files
+*.class
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven Wrapper JAR
+.mvn/wrapper/maven-wrapper.jar
+**/.mvn/wrapper/maven-wrapper.jar
+
+# Gradle files
+.gradle/
+**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# NetBeans
+**/nbproject/private/
+**/nbbuild/
+**/nbdist/
+**/.nb-gradle/
+
+# Spring / Backend Specific
+HELP.md
+
+# ------------------------------------------
+# Frontend (Node / Angular / TypeScript)
+# ------------------------------------------
+**/node_modules/
+**/.angular/cache/
+**/.angular/
+**/dist/
+**/out-tsc/
+**/bazel-out/
+.sass-cache/
+/connect.lock
+**/coverage/
+/libpeerconnection.log
+testem.log
+**/typings/
+__screenshots__/
