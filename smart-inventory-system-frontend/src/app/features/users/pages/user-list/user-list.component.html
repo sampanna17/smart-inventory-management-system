@@ -1,0 +1,278 @@
+<div class="px-4 sm:px-6 lg:px-8 py-2 w-full max-w-9xl mx-auto space-y-6">
+
+  <!-- Page Header -->
+  <app-page-header
+    title="Users & Access"
+    subtitle="Manage staff accounts, administrative permissions, and system access"
+    [roles]="Role.ADMIN"
+    actionLabel="Add Staff"
+    (action)="openCreateModal()"
+  ></app-page-header>
+
+  <!-- Main Content Container -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+
+    <!-- Filters & Search Bar -->
+    <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col xl:flex-row gap-4 items-center justify-between">
+      <!-- Search Input -->
+      <div class="relative w-full xl:max-w-xs">
+        <ng-icon name="heroMagnifyingGlass" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base"></ng-icon>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchInput($event)"
+          placeholder="Search by name, email..."
+          class="w-full pl-9 pr-10 py-2 text-sm text-slate-800 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm min-h-[38px]"
+        />
+        @if (searchQuery()) {
+          <button
+            (click)="clearSearch()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+          >
+            <ng-icon name="heroXMark" class="text-base"></ng-icon>
+          </button>
+        }
+      </div>
+
+      <!-- Filter Dropdowns & Sort Controls -->
+      <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto justify-start xl:justify-end">
+        <!-- Role Filter Dropdown -->
+        <div class="w-36">
+          <app-select
+            [options]="roleFilterOptions"
+            [ngModel]="selectedRoleFilter()"
+            (ngModelChange)="onRoleFilterChange($event)"
+            placeholder="Filter Role"
+          ></app-select>
+        </div>
+
+        <!-- Status Filter Dropdown -->
+        <div class="w-36">
+          <app-select
+            [options]="statusFilterOptions"
+            [ngModel]="selectedStatusFilter()"
+            (ngModelChange)="onStatusFilterChange($event)"
+            placeholder="Filter Status"
+          ></app-select>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="w-40">
+          <app-select
+            [options]="sortOptions"
+            [ngModel]="sortBy()"
+            (ngModelChange)="onSortChange($event)"
+            placeholder="Sort by"
+          ></app-select>
+        </div>
+
+        <!-- Sort Direction Toggle -->
+        <button
+          type="button"
+          (click)="toggleSortOrder()"
+          class="p-2 bg-white border border-slate-300 rounded-lg hover:border-slate-400 text-slate-600 hover:text-slate-900 transition-colors shadow-sm cursor-pointer min-h-[38px] flex items-center justify-center shrink-0"
+          [title]="sortOrder() === 'asc' ? 'Sort Ascending' : 'Sort Descending'"
+        >
+          @if (sortOrder() === 'asc') {
+            <ng-icon name="heroBarsArrowDown" class="text-base"></ng-icon>
+          } @else {
+            <ng-icon name="heroBarsArrowUp" class="text-base"></ng-icon>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (userService.isLoading()) {
+      <div class="p-6">
+        <app-skeleton-loader type="table" [rows]="5"></app-skeleton-loader>
+      </div>
+    } @else if (userService.error()) {
+      <!-- Error State -->
+      <div class="p-6 animate-fade-in">
+        <app-error-state
+          [message]="userService.error()!"
+          (retry)="loadUsers()"
+        ></app-error-state>
+      </div>
+    } @else if (users().length === 0) {
+      <!-- Empty State -->
+      <div class="p-6 animate-fade-in">
+        <app-empty-state
+          title="No users found"
+          message="No users match your filter criteria. Try resetting your search or filters."
+          [roles]="Role.ADMIN"
+          actionLabel="Add Staff"
+          (action)="openCreateModal()"
+        ></app-empty-state>
+      </div>
+    } @else {
+      <!-- Data Table -->
+      <div class="overflow-x-auto animate-fade-in">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">User</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Email</th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Role</th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Created</th>
+              <th scope="col" *appHasRole="Role.ADMIN" class="px-6 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-200">
+            @for (user of users(); track user.userID) {
+              <tr class="hover:bg-slate-50 transition-colors">
+                <!-- User (Avatar Initials + Name) -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <div class="text-sm font-medium text-slate-900">{{ user.fullName }}</div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Email -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 hidden md:table-cell">
+                  {{ user.email }}
+                </td>
+
+                <!-- Role Badge -->
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        [ngClass]="user.role === Role.ADMIN
+                          ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                          : 'bg-blue-100 text-blue-700 border border-blue-200'">
+                    {{ user.role }}
+                  </span>
+                </td>
+
+                <!-- Status Badge -->
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        [ngClass]="user.status === Status.ACTIVE
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-red-100 text-red-800'">
+                    {{ user.status }}
+                  </span>
+                </td>
+
+                <!-- Created Date & Time -->
+                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                  <app-date-time [date]="user.createdAt" mode="date-time" layout="stacked"></app-date-time>
+                </td>
+
+                <!-- Actions -->
+                <td *appHasRole="Role.ADMIN" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex justify-end gap-1">
+                    <!-- View Details -->
+                    <button
+                      (click)="openDetailModal(user)"
+                      class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md transition-colors cursor-pointer"
+                      title="View Details">
+                      <ng-icon name="heroEye" class="text-lg"></ng-icon>
+                    </button>
+
+                    @if (isStaff(user)) {
+                      <!-- Activate/Deactivate Toggle -->
+                      @if (user.status === Status.INACTIVE) {
+                        <button
+                          (click)="openActivateConfirm(user)"
+                          class="p-1.5 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-md transition-colors cursor-pointer"
+                          title="Activate Staff">
+                          <ng-icon name="heroCheckCircle" class="text-lg"></ng-icon>
+                        </button>
+                      } @else {
+                        <button
+                          (click)="openDeactivateConfirm(user)"
+                          class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors cursor-pointer"
+                          title="Deactivate Staff">
+                          <ng-icon name="heroXCircle" class="text-lg"></ng-icon>
+                        </button>
+                      }
+
+                      <!-- Delete -->
+                      <button
+                        (click)="openDeleteConfirm(user)"
+                        class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+                        title="Delete Staff">
+                        <ng-icon name="heroTrash" class="text-lg"></ng-icon>
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Angular Material MatPaginator -->
+      <div class="border-t border-slate-200 bg-white">
+        <mat-paginator
+          [length]="totalElements()"
+          [pageSize]="pageSize()"
+          [pageIndex]="currentPage() - 1"
+          [pageSizeOptions]="pageSizeOptions"
+          [showFirstLastButtons]="true"
+          (page)="onPageChange($event)"
+          aria-label="Select page of users"
+          class="!bg-transparent"
+        >
+        </mat-paginator>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modals -->
+
+<!-- Create Staff Form Modal -->
+<app-create-staff-form
+  [isOpen]="isCreateModalOpen()"
+  (close)="closeCreateModal()"
+  (saved)="onStaffCreated()"
+></app-create-staff-form>
+
+<!-- User Detail Modal -->
+<app-user-detail-modal
+  [isOpen]="isDetailModalOpen()"
+  [user]="selectedUser()"
+  (close)="closeDetailModal()"
+></app-user-detail-modal>
+
+<!-- Delete Confirmation -->
+<app-confirm-dialog
+  [isOpen]="isDeleteModalOpen()"
+  title="Delete Staff"
+  message="Are you sure you want to delete '{{ selectedUser()?.fullName }}'? This action cannot be undone."
+  confirmLabel="Delete"
+  type="danger"
+  [isLoading]="userService.isSubmitting()"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDeleteModal()"
+></app-confirm-dialog>
+
+<!-- Activate Confirmation -->
+<app-confirm-dialog
+  [isOpen]="isActivateModalOpen()"
+  title="Activate Staff"
+  message="Are you sure you want to activate '{{ selectedUser()?.fullName }}'? They will be able to access the system."
+  confirmLabel="Activate"
+  type="primary"
+  [isLoading]="userService.isSubmitting()"
+  (confirm)="confirmActivate()"
+  (cancel)="closeActivateModal()"
+></app-confirm-dialog>
+
+<!-- Deactivate Confirmation -->
+<app-confirm-dialog
+  [isOpen]="isDeactivateModalOpen()"
+  title="Deactivate Staff"
+  message="Are you sure you want to deactivate '{{ selectedUser()?.fullName }}'? They will lose access to the system."
+  confirmLabel="Deactivate"
+  type="danger"
+  [isLoading]="userService.isSubmitting()"
+  (confirm)="confirmDeactivate()"
+  (cancel)="closeDeactivateModal()"
+></app-confirm-dialog>

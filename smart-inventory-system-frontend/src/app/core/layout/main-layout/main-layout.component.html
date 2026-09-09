@@ -1,0 +1,32 @@
+@if (isBrowser) {
+  <div class="flex h-screen bg-background overflow-hidden">
+  
+  <!-- Sidebar -->
+  <app-sidebar 
+    [isCollapsed]="isSidebarCollapsed()"
+    [isMobileOpen]="isMobileSidebarOpen()"
+    (closeMobileSidebar)="closeMobileSidebar()"
+  ></app-sidebar>
+
+  <!-- Main Content Wrapper -->
+  <div class="flex flex-1 flex-col overflow-hidden">
+    
+    <!-- Navbar -->
+    <app-navbar 
+      (toggleSidebar)="toggleSidebar()"
+    ></app-navbar>
+
+    <!-- Page Content Area -->
+    <main class="flex-1 overflow-y-auto bg-background p-4 sm:p-6 lg:p-8 custom-scrollbar">
+      <div class="min-h-full">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+
+  </div>
+  </div>
+} @else {
+  <div class="flex h-screen w-full items-center justify-center bg-background">
+    <div class="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+  </div>
+}

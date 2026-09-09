@@ -1,0 +1,355 @@
+<div class="px-4 sm:px-6 lg:px-8 py-2 w-full max-w-9xl mx-auto space-y-6">
+
+  <!-- Page Header -->
+  <app-page-header
+    title="Sales & Invoices"
+    subtitle="Manage customer orders, point of sale transactions, and sales receipts"
+    [roles]="[Role.ADMIN, Role.STAFF]"
+    actionLabel="Create Sale"
+    (action)="openCreateModal()"
+  ></app-page-header>
+
+  <!-- KPI Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Total Sales -->
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="p-3 bg-primary/10 text-primary rounded-xl shrink-0">
+        <ng-icon name="heroCurrencyDollar" class="text-2xl"></ng-icon>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Sales</p>
+        <h3 class="text-xl font-medium text-slate-900 mt-0.5">
+          @if (saleService.isLoading() && totalSalesCount() === 0) {
+            <span class="inline-block w-10 h-5 bg-slate-200/80 rounded animate-pulse align-middle"></span>
+          } @else {
+            {{ totalSalesCount() }}
+          }
+        </h3>
+      </div>
+    </div>
+
+    <!-- Total Revenue -->
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
+        <ng-icon name="heroBanknotes" class="text-2xl"></ng-icon>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completed Revenue</p>
+        <h3 class="text-xl font-medium text-slate-900 mt-0.5">
+          @if (saleService.isLoading() && totalRevenue() === 0) {
+            <span class="inline-block w-24 h-5 bg-slate-200/80 rounded animate-pulse align-middle"></span>
+          } @else {
+            {{ totalRevenue() | nprCurrency }}
+          }
+        </h3>
+      </div>
+    </div>
+
+    <!-- Completed Sales -->
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="p-3 bg-green-50 text-green-600 rounded-xl shrink-0">
+        <ng-icon name="heroCheckCircle" class="text-2xl"></ng-icon>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Completed Invoices</p>
+        <h3 class="text-xl font-medium text-slate-900 mt-0.5">
+          @if (saleService.isLoading() && completedSalesCount() === 0) {
+            <span class="inline-block w-10 h-5 bg-slate-200/80 rounded animate-pulse align-middle"></span>
+          } @else {
+            {{ completedSalesCount() }}
+          }
+        </h3>
+      </div>
+    </div>
+
+    <!-- Refunded/Cancelled Sales -->
+    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
+      <div class="p-3 bg-amber-50 text-amber-600 rounded-xl shrink-0">
+        <ng-icon name="heroArrowPath" class="text-2xl"></ng-icon>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-slate-500 uppercase tracking-wider">Refunded Orders</p>
+        <h3 class="text-xl font-medium text-slate-900 mt-0.5">
+          @if (saleService.isLoading() && refundedSalesCount() === 0) {
+            <span class="inline-block w-8 h-5 bg-slate-200/80 rounded animate-pulse align-middle"></span>
+          } @else {
+            {{ refundedSalesCount() }}
+          }
+        </h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Container -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+
+    <!-- Filters & Search Bar -->
+    <div class="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row gap-4 items-center justify-between">
+      <!-- Search Input -->
+      <div class="relative w-full sm:max-w-xs">
+        <ng-icon name="heroMagnifyingGlass" class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base"></ng-icon>
+        <input
+          type="text"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="onSearchInput($event)"
+          placeholder="Search by invoice #, customer..."
+          class="w-full pl-9 pr-10 py-2 text-sm text-slate-800 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm min-h-9.5"
+        />
+        @if (searchQuery()) {
+          <button
+            (click)="clearSearch()"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            <ng-icon name="heroXMark" class="text-base"></ng-icon>
+          </button>
+        }
+      </div>
+
+      <!-- Status Filter Tabs & Sort Controls -->
+      <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+        <!-- Status Filter Tabs -->
+        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg w-full sm:w-auto overflow-x-auto">
+          <button
+            (click)="setStatusFilter('ALL')"
+            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer"
+            [ngClass]="selectedStatusFilter() === 'ALL' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+          >
+            All
+          </button>
+          <button
+            (click)="setStatusFilter(SaleStatus.COMPLETED)"
+            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer"
+            [ngClass]="selectedStatusFilter() === SaleStatus.COMPLETED ? 'bg-white text-emerald-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+          >
+            Completed
+          </button>
+          <button
+            (click)="setStatusFilter(SaleStatus.REFUNDED)"
+            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer"
+            [ngClass]="selectedStatusFilter() === SaleStatus.REFUNDED ? 'bg-white text-amber-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+          >
+            Refunded
+          </button>
+          <button
+            (click)="setStatusFilter(SaleStatus.CANCELLED)"
+            class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer"
+            [ngClass]="selectedStatusFilter() === SaleStatus.CANCELLED ? 'bg-white text-red-800 shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+          >
+            Cancelled
+          </button>
+        </div>
+
+        <!-- Sort Dropdown -->
+        <div class="w-40">
+          <app-select
+            [options]="sortOptions"
+            [ngModel]="sortBy()"
+            (ngModelChange)="onSortChange($event)"
+            placeholder="Sort by"
+          ></app-select>
+        </div>
+
+        <!-- Sort Direction Toggle -->
+        <button
+          type="button"
+          (click)="toggleSortOrder()"
+          class="p-2 bg-white border border-slate-300 rounded-lg hover:border-slate-400 text-slate-600 hover:text-slate-900 transition-colors shadow-sm cursor-pointer min-h-9.5 flex items-center justify-center shrink-0"
+          [title]="sortOrder() === 'asc' ? 'Sort Ascending' : 'Sort Descending'"
+        >
+          @if (sortOrder() === 'asc') {
+            <ng-icon name="heroBarsArrowDown" class="text-base"></ng-icon>
+          } @else {
+            <ng-icon name="heroBarsArrowUp" class="text-base"></ng-icon>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Data Table / Loading / Error / Empty States -->
+    @if (saleService.isLoading()) {
+      <div class="p-6">
+        <app-skeleton-loader type="table" [rows]="6"></app-skeleton-loader>
+      </div>
+    } @else if (saleService.error()) {
+      <div class="p-6 animate-fade-in">
+        <app-error-state
+          [message]="saleService.error()!"
+          (retry)="loadSales()"
+        ></app-error-state>
+      </div>
+    } @else if (sales().length === 0) {
+      <div class="p-6 animate-fade-in">
+        <app-empty-state
+          title="No sales orders found"
+          message="No sales match your search criteria. Create your first sales transaction."
+          [roles]="Role.ADMIN"
+          actionLabel="Create Sale"
+          (action)="openCreateModal()"
+        ></app-empty-state>
+      </div>
+    } @else {
+      <!-- Table -->
+      <div class="overflow-x-auto animate-fade-in">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Invoice #</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Customer</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden sm:table-cell">Sale Date</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Served By</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Total Amount</th>
+              <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+              <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-slate-200">
+            @for (s of sales(); track s.saleId) {
+              <tr class="hover:bg-slate-50 transition-colors">
+                <!-- Invoice Number -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 font-mono">
+                  {{ s.invoiceNumber }}
+                </td>
+
+                <!-- Customer Name -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">
+                  {{ s.customerName || 'Walk-in Customer' }}
+                </td>
+
+                <!-- Date & Time -->
+                <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                  <app-date-time [date]="s.saleDate" mode="date-time" layout="stacked"></app-date-time>
+                </td>
+
+                <!-- Served By User -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 hidden md:table-cell">
+                  {{ s.userName || '-' }}
+                </td>
+
+                <!-- Total Amount -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 text-right">
+                  {{ s.totalAmount | nprCurrency }}
+                </td>
+
+                <!-- Status Badge -->
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        [ngClass]="{
+                          'bg-emerald-100 text-emerald-800': s.status === SaleStatus.COMPLETED,
+                          'bg-amber-100 text-amber-800': s.status === SaleStatus.REFUNDED,
+                          'bg-red-100 text-red-800': s.status === SaleStatus.CANCELLED
+                        }">
+                    {{ s.status }}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex justify-end gap-1">
+                    <!-- View Invoice / Details -->
+                    <button
+                      (click)="openDetailModal(s)"
+                      class="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-md transition-colors cursor-pointer"
+                      title="View Invoice">
+                      <ng-icon name="heroEye" class="text-lg"></ng-icon>
+                    </button>
+
+                    <!-- Edit Sale (Admin & Staff) -->
+                    @if (s.status === SaleStatus.COMPLETED) {
+                      <button
+                        (click)="openEditModal(s)"
+                        [disabled]="isFetchingDetail()"
+                        class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-wait"
+                        title="Edit Sale">
+                        @if (isFetchingDetail() && selectedSale()?.saleId === s.saleId) {
+                          <div class="w-4.5 h-4.5 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+                        } @else {
+                          <ng-icon name="heroPencilSquare" class="text-lg"></ng-icon>
+                        }
+                      </button>
+                    }
+
+                    <!-- Admin Only Actions (Refund & Delete) -->
+                    <div *appHasRole="Role.ADMIN" class="flex gap-1">
+                      <!-- Quick Refund Action -->
+                      @if (s.status === SaleStatus.COMPLETED) {
+                        <button
+                          (click)="openStatusModal(s, SaleStatus.REFUNDED)"
+                          class="p-1.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-md transition-colors cursor-pointer"
+                          title="Refund Sale">
+                          <ng-icon name="heroArrowPath" class="text-lg"></ng-icon>
+                        </button>
+                      }
+
+                      <!-- Delete -->
+                      @if (s.status !== SaleStatus.COMPLETED) {
+                        <button
+                          (click)="openDeleteConfirm(s)"
+                          class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+                          title="Delete Sale">
+                          <ng-icon name="heroTrash" class="text-lg"></ng-icon>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Angular Material MatPaginator -->
+      <div class="border-t border-slate-200 bg-white">
+        <mat-paginator
+          [length]="totalElements()"
+          [pageSize]="pageSize()"
+          [pageIndex]="currentPage() - 1"
+          [pageSizeOptions]="pageSizeOptions"
+          [showFirstLastButtons]="true"
+          (page)="onPageChange($event)"
+          aria-label="Select page of sales"
+          class="!bg-transparent"
+        >
+        </mat-paginator>
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- Modals -->
+<app-sale-form
+  [isOpen]="isFormModalOpen()"
+  [sale]="selectedSaleDetail()"
+  (close)="closeFormModal()"
+  (saved)="loadSales()"
+></app-sale-form>
+
+<app-sale-detail-modal
+  [isOpen]="isDetailModalOpen()"
+  [saleSummary]="selectedSale()"
+  (close)="closeDetailModal()"
+  (statusChange)="onDetailStatusChange($event)"
+></app-sale-detail-modal>
+
+<app-confirm-dialog
+  [isOpen]="isDeleteModalOpen()"
+  title="Delete Sale Record"
+  message="Are you sure you want to delete sale invoice '{{ selectedSale()?.invoiceNumber }}'? This action cannot be undone."
+  confirmLabel="Delete"
+  type="danger"
+  [isLoading]="saleService.isSubmitting()"
+  (confirm)="confirmDelete()"
+  (cancel)="closeDeleteModal()"
+></app-confirm-dialog>
+
+<app-confirm-dialog
+  [isOpen]="isStatusModalOpen()"
+  title="Update Sale Status"
+  [message]="getStatusMessage()"
+  confirmLabel="Update Status"
+  [type]="targetStatus() === SaleStatus.CANCELLED ? 'danger' : 'primary'"
+  [isLoading]="saleService.isSubmitting()"
+  (confirm)="confirmStatusChange()"
+  (cancel)="closeStatusModal()"
+></app-confirm-dialog>

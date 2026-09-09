@@ -1,0 +1,100 @@
+<!-- Mobile backdrop -->
+@if (isMobileOpen()) {
+  <div
+    class="fixed inset-0 z-40 bg-slate-900/50 lg:hidden"
+    (click)="onMobileClose()">
+  </div>
+}
+
+<!-- Sidebar -->
+<aside
+  class="fixed inset-y-0 left-0 z-50 flex h-full flex-col bg-sidebar text-slate-300 transition-all duration-300 lg:static lg:z-auto overflow-hidden select-none"
+  [ngClass]="{
+    'w-64': !isCollapsed(),
+    'w-20': isCollapsed(),
+    'translate-x-0': isMobileOpen(),
+    '-translate-x-full lg:translate-x-0': !isMobileOpen()
+  }"
+>
+  <!-- Logo Section -->
+  <div class="flex h-16 shrink-0 items-center border-b border-white/10 px-6 overflow-hidden">
+    <div class="flex items-center gap-3 overflow-hidden">
+      <img
+        ngSrc="/SIMS_LOGO.png"
+        width="1024"
+        height="1536"
+        alt="SIMS Logo"
+        class="h-8 w-auto shrink-0 object-contain"
+      />
+      <span class="text-xl font-bold tracking-tight text-white transition-opacity duration-300 truncate"
+            [ngClass]="{'opacity-0 pointer-events-none': isCollapsed(), 'opacity-100': !isCollapsed()}">
+        SIMS
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <div class="flex-1 overflow-y-auto overflow-x-hidden py-4 hide-scrollbar">
+    <nav class="space-y-1 px-3 overflow-hidden">
+      @for (item of filteredMenuItems(); track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-primary text-white font-medium"
+          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white overflow-hidden"
+          [title]="isCollapsed() ? item.label : ''"
+        >
+          <div class="w-6 h-6 flex items-center justify-center shrink-0">
+            <ng-icon
+              [name]="item.icon"
+              class="text-xl">
+            </ng-icon>
+          </div>
+
+          <span
+            class="whitespace-nowrap transition-opacity duration-300 truncate"
+            [ngClass]="{
+              'opacity-0 pointer-events-none': isCollapsed(),
+              'opacity-100': !isCollapsed()
+            }">
+            {{ item.label }}
+          </span>
+        </a>
+      }
+    </nav>
+  </div>
+
+  <!-- Footer Navigation -->
+  <div class="border-t border-white/10 p-3 shrink-0 overflow-hidden">
+    <nav class="space-y-1 overflow-hidden">
+      <a
+        routerLink="/dashboard/profile"
+        routerLinkActive="bg-primary text-white font-medium"
+        class="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-white/5 hover:text-white overflow-hidden"
+        [title]="isCollapsed() ? 'Settings' : ''"
+      >
+        <div class="w-6 h-6 flex items-center justify-center shrink-0">
+          <ng-icon name="heroCog6Tooth" class="text-xl"></ng-icon>
+        </div>
+        <span class="transition-opacity duration-300 whitespace-nowrap truncate"
+              [ngClass]="{'opacity-0 pointer-events-none': isCollapsed(), 'opacity-100': !isCollapsed()}">
+          Settings
+        </span>
+      </a>
+
+      <button
+        (click)="logout()"
+        class="w-full group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400 transition-colors hover:bg-red-500/10 hover:text-red-400 overflow-hidden cursor-pointer"
+        [title]="isCollapsed() ? 'Logout' : ''"
+      >
+        <div class="w-6 h-6 flex items-center justify-center shrink-0">
+          <ng-icon name="heroArrowLeftOnRectangle" class="text-xl"></ng-icon>
+        </div>
+        <span class="transition-opacity duration-300 whitespace-nowrap truncate"
+              [ngClass]="{'opacity-0 pointer-events-none': isCollapsed(), 'opacity-100': !isCollapsed()}">
+          Logout
+        </span>
+      </button>
+    </nav>
+  </div>
+</aside>
