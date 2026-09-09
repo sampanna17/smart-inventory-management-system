@@ -173,12 +173,6 @@
           @for (point of chartPoints(); track point.period) {
             <div class="flex-1 min-w-[48px] flex flex-col items-center gap-2 group relative">
               
-              <!-- Tooltip on Hover -->
-              <div class="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-2xs rounded-lg px-2.5 py-1.5 pointer-events-none whitespace-nowrap z-10 shadow-lg text-center">
-                <span class="font-bold block">{{ point.revenue | nprCurrency }}</span>
-                <span class="text-slate-300">{{ point.salesCount }} orders ({{ point.unitsSold }} units)</span>
-              </div>
-
               <!-- Bar -->
               <div class="w-full max-w-[36px] bg-primary/10 rounded-t-lg relative flex items-end justify-center group-hover:bg-primary/20 transition-all h-36">
                 <div
