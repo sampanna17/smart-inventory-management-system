@@ -47,28 +47,6 @@ Built with a **Spring Boot 3 RESTful backend** and an **Angular 21 + Tailwind CS
 
 ---
 
-## 🏛 Architecture Overview
-
-```mermaid
-graph TD
-    Client["Client Browser (Angular 21 + Tailwind CSS v4)"]
-    API_Gateway["REST API / Reverse Proxy (Port 8080)"]
-    AuthFilter["JWT Authentication & RBAC Filter"]
-    Controllers["Spring Boot Controllers"]
-    Services["Business Service Layer"]
-    Repositories["Spring Data JPA / Hibernate"]
-    Database[("MySQL Database")]
-
-    Client -->|HTTP / JSON (Port 4200)| API_Gateway
-    API_Gateway --> AuthFilter
-    AuthFilter --> Controllers
-    Controllers --> Services
-    Services --> Repositories
-    Repositories --> Database
-```
-
----
-
 ## 🚀 Key Features
 
 ### 📊 1. Real-time Dashboard & Analytics
