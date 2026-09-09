@@ -51,12 +51,7 @@ temp/
 *.launch
 *.sublime-workspace
 .history/
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/mcp.json
+.vscode/
 
 # ------------------------------------------
 # Backend (Java / Spring Boot / Maven / Gradle)
